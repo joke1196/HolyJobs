@@ -9,12 +9,13 @@ lazy val server = (project in file("server")).settings(
   pipelineStages := Seq(scalaJSProd, gzip),
   resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
-    jdbc,
     cache,
     ws,
-    "com.typesafe.slick" %% "slick" % "latest.release",
+    "com.typesafe.play" %% "play-slick" % "2.0.0",
+    "org.slf4j" % "slf4j-nop" % "1.6.4",
     "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
     "org.webjars" % "jquery" % "1.11.1",
+    "com.h2database" % "h2" % "1.3.176",
     specs2 % Test
   )
 ).enablePlugins(PlayScala).

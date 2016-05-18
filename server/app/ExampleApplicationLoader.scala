@@ -2,6 +2,7 @@ import controllers.{Application, Assets}
 import play.api.ApplicationLoader.Context
 import play.api.{ApplicationLoader, BuiltInComponentsFromContext}
 import router.Routes
+import database._
 
 class ExampleApplicationLoader() extends ApplicationLoader {
   def load(context: Context) = new ApplicationComponents(context).application
