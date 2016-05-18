@@ -10,4 +10,20 @@ class Application()(implicit environment: Environment) extends Controller {
     Ok(views.html.index(SharedMessages.itWorks))
   }
 
+  def details = Action {
+    Ok(views.html.details(SharedMessages.itWorks))
+  }
+  def apply = Action {
+    Ok(views.html.details(SharedMessages.itWorks))
+  }
+
+  def add = Action {
+    Ok(views.html.add(SharedMessages.itWorks))
+  }
+
+  def createJob = Action {
+    Ok(views.html.add(SharedMessages.itWorks))
+  }
+
+
 }
