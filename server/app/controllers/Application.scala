@@ -10,7 +10,7 @@ class Application()(implicit environment: Environment) extends Controller {
     Ok(views.html.index(SharedMessages.itWorks))
   }
 
-  def details = Action {
+  def details(id: Long) = Action {
     Ok(views.html.details(SharedMessages.itWorks))
   }
   def apply = Action {
