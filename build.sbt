@@ -16,7 +16,8 @@ lazy val server = (project in file("server")).settings(
     "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
     "org.webjars" % "jquery" % "1.11.1",
     specs2 % Test
-  )
+  ),
+  includeFilter in (Assets, LessKeys.less) := "style.less"
 ).enablePlugins(PlayScala).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)

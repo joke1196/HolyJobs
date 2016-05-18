@@ -1,9 +1,22 @@
 @(message: String)(implicit environment: play.api.Environment)
 
-@main("Play with Scala.js") {
-<h2>Play and Scala.js share a same message</h2>
-<ul>
-  <li>Play shouts out: <em>@message</em></li>
-  <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
-</ul>
+@main("HolyJobs") {
+    <div class="home-page">
+        <span class="helper"></span>
+        <div class="home-title-panel">
+            Looking for a job for your holidays?
+            <br/>
+            <img class="home-title" src="@routes.Assets.at("images/title.png")" />
+            <br/>
+            <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
+        </div>
+        <div class="home-search">
+            <span class="search-field-icon">
+                <img src="@routes.Assets.at("images/favicon.png")" />
+            </span>
+            <select class="search-field">
+                <option value="where">Where?</option>
+            </select>
+        </div>
+    </div>
 }
