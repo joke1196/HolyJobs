@@ -1,7 +1,7 @@
 @(message: String)(implicit environment: play.api.Environment)
 
 @main("HolyJobs") {
-    <div class="home-page">
+    <div class="home-page-top">
         <span class="helper"></span>
         <div class="home-title-panel">
             Looking for a job for your holidays?
@@ -10,13 +10,34 @@
             <br/>
             <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
         </div>
-        <div class="home-search">
-            <span class="search-field-icon">
-                <img src="@routes.Assets.at("images/favicon.png")" />
-            </span>
-            <select class="search-field">
-                <option value="where">Where?</option>
-            </select>
+
+        <div class="home-bottom">
+            <div class="home-search">
+                <span class="fa fa-map-marker fa-2x search-field-icon"></span>
+                <select class="search-field">
+                    <option value="where">Where?</option>
+                </select>
+
+                <span class="fa fa-calendar fa-2x search-field-icon"></span>
+                <select class="search-field">
+                    <option value="when">When?</option>
+                </select>
+
+                <span class="fa fa-briefcase fa-2x search-field-icon"></span>
+                <select class="search-field">
+                    <option value="when">What?</option>
+                </select>
+
+                <a class="btn btn-holyjoby btn-home" onclick="home.HomeScalaJs().searchForJobs()">Money, to me!</a>
+            </div>
+
+            <div class="home-proposition">
+                <span class="job-proposition-label">You already have money to take care of your mummy and are here to <strong>propose a job</strong> for holidays?</span>
+                <a class="btn btn-holyjoby btn-home" href='@routes.Application.add()'>Click here</a>
+            </div>
         </div>
+    </div>
+    <div class="home-page-bottom" id="home-page-bottom">
+        Yay!
     </div>
 }

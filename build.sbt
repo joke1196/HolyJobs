@@ -21,7 +21,7 @@ lazy val server = (project in file("server")).settings(
     "com.typesafe.slick" %% "slick" % "latest.release",
     specs2 % Test
   ),
-  includeFilter in (Assets, LessKeys.less) := "style.less"
+  includeFilter in (Assets, LessKeys.less) := "*.less"
 ).enablePlugins(PlayScala).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)
@@ -33,6 +33,7 @@ lazy val client = (project in file("client")).settings(
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "latest.release",
     "com.lihaoyi" %% "scalatags" % "latest.release"
+    "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
