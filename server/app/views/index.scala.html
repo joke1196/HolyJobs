@@ -1,4 +1,4 @@
-@(message: String)(implicit environment: play.api.Environment)
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])(implicit environment: play.api.Environment)
 
 @main("HolyJobs") {
     <div class="home-page-top">
@@ -16,6 +16,9 @@
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
                 <select class="search-field">
                     <option value="where">Where?</option>
+                    @for(region <- regions){
+                      <option value="@region.regionId">@region.regionName</option>
+                    }
                 </select>
 
                 <span class="fa fa-calendar fa-2x search-field-icon"></span>
@@ -25,7 +28,10 @@
 
                 <span class="fa fa-briefcase fa-2x search-field-icon"></span>
                 <select class="search-field">
-                    <option value="when">What?</option>
+                    <option value="what">What?</option>
+                    @for(jobType <- jobTypes){
+                      <option value="@jobType.typeId">@jobType.typeName</option>
+                    }
                 </select>
 
                 <a class="btn btn-holyjoby btn-home" onclick="home.HomeScalaJs().searchForJobs()">Money, to me!</a>
@@ -38,6 +44,13 @@
         </div>
     </div>
     <div class="home-page-bottom" id="home-page-bottom">
+      <ul>
+      @for(job <- jobs){
+        <li>@job.name</li>
+        <li>@job.startDate</li>
+        <li>@job.endDate</li>
+      }
+    </ul>
         <div class="job-row">
             <div class="job-element">
                 <div class="job-element-content">
