@@ -6,17 +6,19 @@ lazy val scalaV = "2.11.8"
 lazy val server = (project in file("server")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
+  routesGenerator := InjectedRoutesGenerator,
   pipelineStages := Seq(scalaJSProd, gzip),
   resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
+    jdbc,
     cache,
     ws,
-    "com.typesafe.play" %% "play-slick" % "2.0.0",
-    "com.typesafe.slick" %% "slick" % "3.1.0",
-    "org.slf4j" % "slf4j-nop" % "1.6.4",
-    "com.vmunier" %% "play-scalajs-scripts" % "0.5.0",
-    "org.webjars" % "jquery" % "1.11.1",
-     "mysql" % "mysql-connector-java" % "5.1.34",
+
+    "org.slf4j" % "slf4j-nop" % "latest.release",
+    "com.vmunier" %% "play-scalajs-scripts" % "latest.release",
+    "org.webjars" % "jquery" % "latest.release",
+    "com.h2database" % "h2" % "latest.release",
+    "com.typesafe.slick" %% "slick" % "latest.release",
     specs2 % Test
   ),
   includeFilter in (Assets, LessKeys.less) := "*.less"
@@ -29,7 +31,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+    "org.scala-js" %%% "scalajs-dom" % "latest.release",
+    "com.lihaoyi" %% "scalatags" % "latest.release",
     "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
