@@ -32,7 +32,6 @@ import play.api.mvc.Controller
 
 
 class Application @Inject()(implicit environment: Environment) extends Controller {
-
   private val db = Database.forConfig("h2mem1")
   // lazy val jobD = new JobDAO
   def index = Action {

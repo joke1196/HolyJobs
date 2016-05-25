@@ -12,17 +12,19 @@ object HomeScalaJs extends js.JSApp {
     @JSExport
     def searchForJobs(): Unit = {
         //val tmp = jQuery("#home-page-bottom").position().top;
-        val tmp = dom.document.getElementById("home-page-bottom").getBoundingClientRect().top
-        println(tmp)
+        /*val tmp = dom.document.getElementById("home-page-bottom").getBoundingClientRect().top
+        println(tmp)*/
 
-        /*val x = jQuery("html, body").animate({
-            scrollTop: @tmp
+        //jQuery("#home")
+
+        /*jQuery("html, body").animate({
+            "scrollTop": "439"
         }, 1000);*/
     }
 
     // Occurs on each page loading.
     def main(): Unit = {
-        jQuery("body").append("<p>blablabla</p>")
+        //jQuery("body").append("<p>blablabla</p>")
         //dom.document.getElementById("scalajsShoutOut").textContent = SharedMessages.itWorks
     }
 }
