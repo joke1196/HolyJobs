@@ -1,36 +1,42 @@
 package database
 
-import scala.concurrent.Future
-
+import scala.concurrent._
+import scala.concurrent.duration._
+import javax.inject.Inject
 import play.api.Play
 import javax.inject._
-import models.Job
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
-import slick.driver.MySQLDriver.api._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import slick.driver.JdbcProfile
+import play.api.libs.concurrent.Execution.Implicits._
 import slick.lifted.Tag
+import slick.driver.H2Driver.api._
 
-trait JobComponent {
-  class JobsTable(tag: Tag) extends Table[Job](tag, "JOB") {
 
-    def name = column[String]("NAME", O.PrimaryKey)
-    def color = column[String]("COLOR")
+import java.sql.Timestamp
 
-    def * = (name, color) <> (Job.tupled, Job.unapply _)
-  }
+case class Job(name: String, startDate: Timestamp, endDate:Timestamp, id: Option[Int] = None)
 
+class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
+  def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def name = column[String]("NAME")
+  def startDate = column[Timestamp]("START_DATE")
+  def endDate = column[Timestamp]("END_DATE")
+
+  def * = (name, startDate, endDate, id.?)<>((Job.apply _).tupled, Job.unapply)
 }
 
+object Jobs {
+  val db = Database.forConfig("h2mem1")
+  lazy val data = TableQuery[Jobs]
 
-object JobDAO extends JobComponent {
 
-  // import dbConfig.driver.api._
-  protected val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
-  private val Jobs = TableQuery[JobsTable]
+  def insert(name: String, startDate: Timestamp, endDate: Timestamp) =
+    Await.result(db.run(DBIO.seq(data += Job(name, startDate, endDate))), Duration.Inf)
 
-  def all(): Future[Seq[Job]] = dbConfig.db.run(Jobs.result)
-  def insert(job: Job): Future[Unit] = dbConfig.db.run(Jobs += job).map { _ => () }
+  def all(): Seq[Job] = (for (j <- Await.result(db.run(data.result), Duration.Inf)) yield j).toSeq
+  // def insert(job: Job): Future[Unit] = dbConfig.db.run(jobs += job).map { _ => () }
 
+  def byID(id: Int): Option[Job] = {
+    val jobs = for (j <- Await.result(db.run(data.filter(_.id === id).result), Duration.Inf)) yield j
+    if (jobs.isEmpty) None
+    else Some(jobs.head)
+  }
 }
