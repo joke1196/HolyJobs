@@ -5,21 +5,28 @@ import play.api.mvc._
 import shared.SharedMessages
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import javax.inject.Inject
-import database.JobDAO
+import javax.inject._
+
+import scala.concurrent.Future
+
+import database._
+import models.Job
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms.text
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.HasDatabaseConfigProvider
+import slick.driver.JdbcProfile
 import play.api.mvc.Action
 import play.api.mvc.Controller
 
 class Application @Inject()(implicit environment: Environment) extends Controller {
-
-
-  def index = Action {
-    Ok(views.html.index(SharedMessages.itWorks))
-  }
+  // val jobDao = new JobDAO
+  def index = Action.async { implicit request =>
+  val resultingJobs: Future[Seq[Job]] = JobDAO.all()
+   resultingJobs.map(jobs => Ok(views.html.index(jobs.toString())))
+}
 
   def details(id: Long) = Action {
     Ok(views.html.details(SharedMessages.itWorks))
