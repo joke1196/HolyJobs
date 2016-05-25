@@ -1,3 +1,7 @@
+@holyjobs-color: #1b4468;
+@border-color: #484848;
+@home-bottom-spacing: 3.8vh;
+
 // ================================== LAYOUT ===================================
 @font-face {
    font-family: cFGreenCorn;
@@ -14,10 +18,21 @@ body {
     margin: 0;
 }
 
+.btn-holyjoby {
+    background-color: @holyjobs-color;
+    color: white;
+
+    &:hover, &:focus, &:active {
+        background-color: #14314c;
+        color: white;
+        outline: 0 !important;
+    }
+}
+
 
 
 // ================================= HOME PAGE =================================
-.home-page {
+.home-page-top {
     background: rgba(0, 0, 0, 0) url("../images/home.jpg") no-repeat 0 / cover;
     height: 100vh;
     width: 100%;
@@ -30,7 +45,7 @@ body {
 }
 
 .home-title-panel {
-    color: #1b4468;
+    color: @holyjobs-color;
     font-size: 1.8vw;
     margin-left: 35%;
     text-align: center;
@@ -48,24 +63,73 @@ body {
     font-size: 1.1vw;
 }
 
-.home-search {
-    bottom: 3em;
+.home-bottom {
+    bottom: @home-bottom-spacing;
     margin-left: 35%;
     position: absolute;
+    width: 60%;
+}
+
+.home-search {
+    display: table;
+    width: 100%;
 }
 
 .search-field-icon {
     background-color: rgba(0, 0, 0, 0.4);
-    border-bottom: 2px solid #484848;
-    border-left: 2px solid #484848;
-    border-top: 2px solid #484848;
+    border-bottom: 2px solid @border-color;
+    border-left: 2px solid @border-color;
+    border-top: 2px solid @border-color;
+    color: white;
+    display: table-cell;
+    font-size: 1.4vw;
+    text-align: center;
+    vertical-align: middle;
+    width: 50px;
+}
+
+.search-fields {
+    display: table-cell;
+    font-size: 14px;
+    font-size: 0.8vw;
+    font-weight: bold;
+    -moz-appearance: none;
+}
+
+select::-ms-expand {
+    display: none;
 }
 
 .search-field {
+    .search-fields;
     background-color: rgba(0, 0, 0, 0.4);
-    border: 2px solid #484848;
+    background-image: url("../images/down-arrow.svg");
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: 2vw;
+    border: 2px solid @border-color;
     color: white;
-    font-weight: bold;
     letter-spacing: 0.5px;
     padding: 14px 15px;
+    width: 90%;
+}
+
+.btn-home {
+    .search-fields;
+}
+
+.home-proposition {
+    display: table;
+    margin-top: @home-bottom-spacing;
+}
+
+.job-proposition-label {
+    display: table-cell;
+    padding-right: 1vw;
+    font-size: 0.8vw;
+    vertical-align: middle;
+}
+
+.home-page-bottom {
+    height: 100vh;
 }

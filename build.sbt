@@ -18,7 +18,7 @@ lazy val server = (project in file("server")).settings(
     "com.h2database" % "h2" % "1.3.176",
     specs2 % Test
   ),
-  includeFilter in (Assets, LessKeys.less) := "style.less"
+  includeFilter in (Assets, LessKeys.less) := "*.less"
 ).enablePlugins(PlayScala).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)
@@ -28,7 +28,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.0"
+    "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+    "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
