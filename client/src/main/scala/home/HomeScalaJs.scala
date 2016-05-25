@@ -17,9 +17,12 @@ object HomeScalaJs extends js.JSApp {
 
         //jQuery("#home")
 
-        /*jQuery("html, body").animate({
-            "scrollTop": "439"
-        }, 1000);*/
+        //jQuery("body").append("<p>blablabla</p>")
+
+        //println("ok");
+
+        //jQuery("#search-jobs-button").animate(Map("fontSize" -> "24px"), 1000);
+        //jQuery("html, body").animate(Map("scrollTop" -> 439), 1000);
     }
 
     // Occurs on each page loading.

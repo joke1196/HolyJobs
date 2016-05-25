@@ -1,9 +1,30 @@
 @(message: String)(implicit environment: play.api.Environment)
 
 @main("HolyJobs") {
-    <div class="home-page-top">
-        <span class="helper"></span>
-        <div class="home-title-panel">
+    <script>
+        $(document).ready(function() {
+            $(window).on("scroll", function () {
+                var homeBottomTop = $("#home-bottom").position().top - $("#home-title").height();
+                var titleOpacity = ($(window).scrollTop() / homeBottomTop);
+                var percentOfScrollingToBottom = ($(window).scrollTop() / $("#home-bottom").position().top);
+                var homeTitleBottomMiddlePosition = ($("#home-page-top").height() - $("#home-bottom").position().top - $("#home-title-bottom").height()) / 2;
+
+                $("#helper").css("height", "calc(25% + " + $(window).scrollTop() / 2.5 + "px)");
+                $("#home-title").css("opacity", 1 - titleOpacity);
+                $("#home-title-bottom").css("bottom", "calc(" + homeTitleBottomMiddlePosition + "px - (150px + 3.8vh) * " + Math.max(1 - percentOfScrollingToBottom, 0) + ")");
+            })
+
+            $("#search-jobs-button").click(function() {
+                $("html, body").animate({
+                    "scrollTop": $("#home-bottom").position().top
+                }, 1000);
+            })
+        })
+    </script>
+
+    <div class="home-page-top" id="home-page-top">
+        <span class="helper" id="helper"></span>
+        <div class="home-title-panel" id="home-title" >
             Looking for a job for your holidays?
             <br/>
             <img class="home-title" src="@routes.Assets.at("images/title.png")" />
@@ -11,7 +32,9 @@
             <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
         </div>
 
-        <div class="home-bottom">
+        <img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" />
+
+        <div class="home-bottom" id="home-bottom">
             <div class="home-search">
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
                 <select class="search-field">
@@ -28,7 +51,7 @@
                     <option value="when">What?</option>
                 </select>
 
-                <a class="btn btn-holyjoby btn-home" onclick="home.HomeScalaJs().searchForJobs()">Money, to me!</a>
+                <a class="btn btn-holyjoby btn-home" id="search-jobs-button">Money, to me!</a>
             </div>
 
             <div class="home-proposition">
@@ -37,6 +60,9 @@
             </div>
         </div>
     </div>
+
+    <div class="jobs-title">Woohoo, here are the jobs!</div>
+
     <div class="home-page-bottom" id="home-page-bottom">
         <div class="job-row">
             <div class="job-element">
@@ -52,7 +78,7 @@
                 <div class="job-element-content">
                     <img alt="job2" class="job-element-image" src="@routes.Assets.at("images/jobs/job2.jpg")" />
                     <div class="job-element-title">
-                        <strong>Redneck</strong>
+                        <strong>Redneck Cowboy</strong>
                     </div>
                 </div>
             </div>
@@ -65,8 +91,26 @@
                     </div>
                 </div>
             </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job3" class="job-element-image" src="@routes.Assets.at("images/jobs/job4.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Duck Feeder</strong>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="job-row">
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+
             <div class="job-element">
                 <div class="job-element-content">
                     <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />

@@ -33,8 +33,11 @@ body {
 
 // ================================= HOME PAGE =================================
 .home-page-top {
-    background: rgba(0, 0, 0, 0) url("../images/home.jpg") no-repeat 0 / cover;
+    background: rgba(0, 0, 0, 0) url("../images/home.jpg") no-repeat fixed 0 / cover;
+    background-position: 0 0 fixed;
     height: 100vh;
+    overflow: hidden;
+    position: relative;
     width: 100%;
 }
 
@@ -56,16 +59,22 @@ body {
 
 .home-title {
     width: 33vw;
-    text-shadow: 0px 0px 5px white;
 }
 
 .home-slogan {
     font-size: 1.1vw;
 }
 
+.home-title-bottom {
+    bottom: @home-bottom-spacing;
+    left: 2vw;
+    position: absolute;
+    width: 28vw;
+}
+
 .home-bottom {
     bottom: @home-bottom-spacing;
-    margin-left: 35%;
+    margin: @home-bottom-spacing 0 0 35%;
     position: absolute;
     width: 60%;
 }
@@ -130,11 +139,15 @@ select::-ms-expand {
     vertical-align: middle;
 }
 
+.jobs-title {
+    font-size: 2em;
+    margin: 1em 0 0 15%;
+}
+
 .home-page-bottom {
     display: table;
-    height: 100vh;
     margin-left: 50%;
-    padding: 5em;
+    padding: 2em 5em;
     transform: translateX(-50%);
     width: 80%;
 }
@@ -145,29 +158,32 @@ select::-ms-expand {
 
 .job-element {
     display: table-cell;
-    padding: 2%;
-    width: 20%;
+    padding: 1.5%;
+    width: 23%;
 }
 
 .job-element-content {
     border: 1px solid #bbb;
-    //border-radius: 4px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
     cursor: pointer;
-    width: 100%;
     position: relative;
     width: 100%;
 }
 
 .job-element-image {
-    //border-radius: 4px;
+    border-radius: 4px;
     width: 100%;
 }
 
 .job-element-title {
     background-color: rgba(255, 255, 255, 0.9);
-    //border-bottom-left-radius: 4px;
-    //border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
     bottom: 0;
+    font-size: 1.2em;
     padding: 5%;
     position: absolute;
     text-align: center;
