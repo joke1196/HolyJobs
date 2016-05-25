@@ -23,9 +23,10 @@ import play.api.mvc.Controller
 
 class Application @Inject()(implicit environment: Environment) extends Controller {
   // val jobDao = new JobDAO
-  def index = Action.async { implicit request =>
-  val resultingJobs: Future[Seq[Job]] = JobDAO.all()
-   resultingJobs.map(jobs => Ok(views.html.index(jobs.toString())))
+  def index = Action { implicit request =>
+     /*val resultingJobs: Future[Seq[Job]] = JobDAO.all()
+   resultingJobs.map(jobs => Ok(views.html.index(jobs.toString())))*/
+   Ok(views.html.index("ok"))
 }
 
   def details(id: Long) = Action {
