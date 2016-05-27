@@ -48,13 +48,15 @@ class Application @Inject()(implicit environment: Environment) extends Controlle
     Await.result(db.run(setup), Duration.Inf)
   }
 
-  def details(id: Long) = Action {
-    Ok(views.html.details(SharedMessages.itWorks))
+  def details(id: Int) = Action {
+    val jobDetails: Option[Job] = Jobs.byID(id)
+    val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
+    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
   }
 
-  def apply = Action {
-    Ok(views.html.details(SharedMessages.itWorks))
-  }
+  // def apply = Action {
+  //   Ok(views.html.details("Okay"))
+  // }
 
   def add = Action {
     Ok(views.html.add(SharedMessages.itWorks))

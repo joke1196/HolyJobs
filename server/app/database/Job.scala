@@ -12,17 +12,23 @@ import slick.driver.MySQLDriver.api._
 
 import java.sql.Date
 
-case class Job(name: String, startDate: Date, endDate:Date,jobType:Int, id: Option[Int] = None)
+case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Float, workingTime:Int, email:String, id: Option[Int] = None)
 
 class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
+  def description = column[String]("description")
   def startDate = column[Date]("startDate")
   def endDate = column[Date]("endDate")
   def jobType = column[Int]("jobType")
+  def region = column[Int]("region")
+  def hourlyPay = column[Float]("hourlyPay")
+  def workingTime = column[Int]("workingTime")
+  def email = column[String]("email")
   def typeId = foreignKey("typeId", jobType, Types.typeTable)(_.typeId)
+  def regionId = foreignKey("regionId", region, Regions.regionTable)(_.regionId)
 
-  def * = (name, startDate, endDate, jobType, id.?)<>((Job.apply _).tupled, Job.unapply)
+  def * = (name, description, startDate, endDate, jobType, region, hourlyPay, workingTime, email, id.?)<>((Job.apply _).tupled, Job.unapply)
 }
 
 object Jobs {
@@ -30,8 +36,8 @@ object Jobs {
   val jobTable = TableQuery[Jobs]
 
 
-  def insert(name: String, startDate: Date, endDate: Date, jobType:Int) =
-    Await.result(db.run(DBIO.seq(jobTable += Job(name, startDate, endDate,jobType ))), Duration.Inf)
+  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Float, workingTime:Int, email:String) =
+    Await.result(db.run(DBIO.seq(jobTable += Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email ))), Duration.Inf)
 
   def all(): List[Job] = (for (j <- Await.result(db.run(jobTable.result), Duration.Inf)) yield j).toList
   // def insert(job: Job): Future[Unit] = dbConfig.db.run(jobs += job).map { _ => () }
@@ -42,10 +48,10 @@ object Jobs {
     else Some(jobs.head)
   }
 
-  def byType(typeId: Int): Option[List[Job]] = {
-      val job = for (j <- Await.result(db.run(jobTable.filter(_.jobType === typeId).result), Duration.Inf)) yield j
+  def relatedJob(typeId: Int, id:Int): Option[List[Job]] = {
+      val job = for (j <- Await.result(db.run(jobTable.filter(_.jobType === typeId).filter(_.id =!= id).result), Duration.Inf)) yield j
       if(job.isEmpty) None
-      else Some(job.toList)
+      else Some(job.take(5).toList)
   }
 
 }

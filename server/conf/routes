@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /details/:id                controllers.Application.details(id: Long)
+GET     /details/:id                controllers.Application.details(id: Int)
 GET     /add                        controllers.Application.add
 
 # Map static resources from the /public folder to the /assets URL path
