@@ -70,11 +70,25 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     Ok(views.html.add(jobForm,jobTypes, regions))
   }
 
-  def createJob = Action { implicit request =>
-    jobForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.add(formWithErrors, Types.all,Regions.all)),
+  def createJob = Action(parse.multipartFormData) { implicit request =>
+    val form = jobForm.bindFromRequest()
+    println(form.toString)
+    form.fold(
+      formWithErrors => {
+        BadRequest(views.html.add(formWithErrors, Types.all,Regions.all))
+      },
       job => {
-        val inserting = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email)
+        request.body.file("img") match {
+          case Some(file) => {
+            import java.io.File
+            val filename = file.filename
+            println(filename)
+            val contentType = file.contentType
+            file.ref.moveTo(new File(s"tmp/" + file.filename))
+            Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/" + filename))
+          }
+          case _ => Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/noImg.jpeg"))
+        }
       }
     )
     Ok(views.html.index(Jobs.all, Types.all, Regions.all))
@@ -91,6 +105,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
      "hourlyPay" -> of(doubleFormat),
      "workingTime" -> number (min = 0, max = 100),
      "email" -> email,
+     "img"-> optional(text),
      "id" -> optional(number)
    )(Job.apply)(Job.unapply)
   )

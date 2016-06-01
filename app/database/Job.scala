@@ -12,7 +12,7 @@ import slick.driver.MySQLDriver.api._
 
 import java.sql.Date
 
-case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, id: Option[Int] = None)
+case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String] = None, id: Option[Int] = None)
 
 class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -25,10 +25,11 @@ class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
   def hourlyPay = column[Double]("hourlyPay")
   def workingTime = column[Int]("workingTime")
   def email = column[String]("email")
+  def img = column[String]("img")
   def typeId = foreignKey("typeId", jobType, Types.typeTable)(_.typeId)
   def regionId = foreignKey("regionId", region, Regions.regionTable)(_.regionId)
 
-  def * = (name, description, startDate, endDate, jobType, region, hourlyPay, workingTime, email, id.?)<>((Job.apply _).tupled, Job.unapply)
+  def * = (name, description, startDate, endDate, jobType, region, hourlyPay, workingTime, email,img.?, id.?)<>((Job.apply _).tupled, Job.unapply)
 }
 
 object Jobs {
@@ -36,8 +37,10 @@ object Jobs {
   val jobTable = TableQuery[Jobs]
 
 
-  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String) =
-    Await.result(db.run(DBIO.seq(jobTable += Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email ))), Duration.Inf)
+  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String]) = {
+
+    Await.result(db.run(jobTable += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, img )), Duration.Inf)
+  }
 
   def all(): List[Job] = (for (j <- Await.result(db.run(jobTable.result), Duration.Inf)) yield j).toList
   // def insert(job: Job): Future[Unit] = dbConfig.db.run(jobs += job).map { _ => () }
