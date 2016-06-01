@@ -30,3 +30,6 @@ shared/.jvm
 .cache
 .target
 bin/
+
+# db config
+server/conf/application.conf
