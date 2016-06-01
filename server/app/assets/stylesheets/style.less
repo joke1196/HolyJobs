@@ -29,6 +29,16 @@ body {
     }
 }
 
+.tooltip.top .tooltip-arrow {
+    border-top-color: #f2dede;
+}
+
+.tooltip-inner {
+    background-color: #f2dede;
+    color: #a94442;
+    font-size: 1.2em;
+}
+
 
 
 // ================================= HOME PAGE =================================
@@ -39,6 +49,7 @@ body {
     overflow: hidden;
     position: relative;
     width: 100%;
+    box-shadow: 0 0 2px black;
 }
 
 .helper {
@@ -66,7 +77,8 @@ body {
 }
 
 .home-title-bottom {
-    bottom: @home-bottom-spacing;
+    //bottom: @home-bottom-spacing;
+    bottom: 100vh;
     left: 2vw;
     position: absolute;
     width: 28vw;

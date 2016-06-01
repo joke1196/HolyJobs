@@ -11,6 +11,9 @@ object HomeScalaJs extends js.JSApp {
     // the main page.
     @JSExport
     def searchForJobs(): Unit = {
+        //val searchWhatField = dom.document.getElementById("search-what")
+        //val a = jQuery("#search-what").val()
+        //println(a)
         //val tmp = jQuery("#home-page-bottom").position().top;
         /*val tmp = dom.document.getElementById("home-page-bottom").getBoundingClientRect().top
         println(tmp)*/

@@ -3,6 +3,8 @@
 @main("HolyJobs") {
     <script>
         $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+
             $(window).on("scroll", function () {
                 var homeBottomTop = $("#home-bottom").position().top - $("#home-title").height();
                 var titleOpacity = ($(window).scrollTop() / homeBottomTop);
@@ -15,9 +17,41 @@
             })
 
             $("#search-jobs-button").click(function() {
-                $("html, body").animate({
-                    "scrollTop": $("#home-bottom").position().top
-                }, 1000);
+                var whereValue = $("#search-where").val();
+                var whenValue = $("#search-when").val();
+                var whatValue = $("#search-what").val();
+                var valid = true;
+
+                // Hides the error tooltip if the user selected a location.
+                if (whereValue) {
+                    $("#search-where").tooltip('hide');
+                // Otherwise shows it and indicates the system the fields are
+                // not valid.
+                } else {
+                    $("#search-where").tooltip('show');
+                    valid = false;
+                }
+
+                if (whenValue) {
+                    $("#search-when").tooltip('hide');
+                } else {
+                    $("#search-when").tooltip('show');
+                    valid = false;
+                }
+
+                if (whatValue) {
+                    $("#search-what").tooltip('hide');
+                } else {
+                    $("#search-what").tooltip('show');
+                    valid = false;
+                }
+
+                // If every field is valid scroll the screen down.
+                if (valid) {
+                    $("html, body").animate({
+                        "scrollTop": $("#home-bottom").position().top
+                    }, 1000);
+                }
             })
         })
     </script>
@@ -37,18 +71,24 @@
         <div class="home-bottom" id="home-bottom">
             <div class="home-search">
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
-                <select class="search-field">
-                    <option value="where">Where?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" title="Please select a location.">
+                    <option value="">Where?</option>
+                    <option value="valais">Valais</option>
+                    <option value="vaud">Vaud</option>
                 </select>
 
                 <span class="fa fa-calendar fa-2x search-field-icon"></span>
-                <select class="search-field">
-                    <option value="when">When?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-when" title="Please select dates.">
+                    <option value="">When?</option>
+                    <option value="val1">Val1</option>
+                    <option value="val2">Val2?</option>
                 </select>
 
                 <span class="fa fa-briefcase fa-2x search-field-icon"></span>
-                <select class="search-field">
-                    <option value="when">What?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" title="Please select a subject.">
+                    <option value="">What?</option>
+                    <option value="computer">Computer</option>
+                    <option value="sales">Sales</option>
                 </select>
 
                 <a class="btn btn-holyjoby btn-home" id="search-jobs-button">Money, to me!</a>
