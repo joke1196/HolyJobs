@@ -15,6 +15,7 @@ lazy val server = (project in file("server")).settings(
     ws,
 
     "org.slf4j" % "slf4j-nop" % "latest.release",
+    "mysql" % "mysql-connector-java" % "latest.release",
     "com.vmunier" %% "play-scalajs-scripts" % "latest.release",
     "org.webjars" % "jquery" % "latest.release",
     "com.h2database" % "h2" % "latest.release",

@@ -1,4 +1,4 @@
-@(message: String)(implicit environment: play.api.Environment)
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])(implicit environment: play.api.Environment)
 
 @main("HolyJobs") {
     <script>
@@ -73,8 +73,9 @@
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
                 <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" title="Please select a location.">
                     <option value="">Where?</option>
-                    <option value="valais">Valais</option>
-                    <option value="vaud">Vaud</option>
+                    @for(region <- regions){
+                      <option value="@region.regionId">@region.regionName</option>
+                    }
                 </select>
 
                 <span class="fa fa-calendar fa-2x search-field-icon"></span>
@@ -87,8 +88,9 @@
                 <span class="fa fa-briefcase fa-2x search-field-icon"></span>
                 <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" title="Please select a subject.">
                     <option value="">What?</option>
-                    <option value="computer">Computer</option>
-                    <option value="sales">Sales</option>
+                    @for(jobType <- jobTypes){
+                      <option value="@jobType.typeId">@jobType.typeName</option>
+                    }
                 </select>
 
                 <a class="btn btn-holyjoby btn-home" id="search-jobs-button">Money, to me!</a>
@@ -104,6 +106,13 @@
     <div class="jobs-title">Woohoo, here are the jobs!</div>
 
     <div class="home-page-bottom" id="home-page-bottom">
+      <ul>
+      @for(job <- jobs){
+        <li>@job.name</li>
+        <li>@job.startDate</li>
+        <li>@job.endDate</li>
+      }
+    </ul>
         <div class="job-row">
             <div class="job-element">
                 <div class="job-element-content">
