@@ -1,0 +1,21 @@
+@(job: database.Job, relatedJobs : List[database.Job] )
+
+@main("Play with Scala.js") {
+<h2>Play and Scala.js share a same message</h2>
+<ul>
+    <li>Detail shouts out: <em>@job.name</em></li>
+</ul>
+
+<h2> relatedJob</h2>
+<ul>
+  @if(!relatedJobs.isEmpty){
+    @for(job <- relatedJobs){
+      <li>@job.name</li>
+    }
+  }else{
+    <h3> No related jobs Found</h3>
+  }
+</ul>
+
+
+}

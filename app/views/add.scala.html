@@ -1,0 +1,88 @@
+@(jobTypes: List[database.Type], regions : List[database.Region])
+
+@main("Add a job - HolyJobs") {
+    <script>
+        $(document).ready(function() {
+            // Occurs when the user clicked on the "Money, to me!" button.
+            $("#search-jobs-button").click(function() {
+                var whereValue = $("#search-where").val();
+                var whenValue = $("#search-when").val();
+                var whatValue = $("#search-what").val();
+
+                $("#search-jobs-button").tooltip('hide');
+
+                if (!whereValue) {
+                    $("#header-error-content").text($("#search-where").attr("title"));
+                    $("#header-error").addClass("header-error-visible");
+                } else if (!whenValue) {
+                    $("#header-error-content").text($("#search-when").attr("title"));
+                    $("#header-error").addClass("header-error-visible");
+                } else if (!whatValue) {
+                    $("#header-error-content").text($("#search-what").attr("title"));
+                    $("#header-error").addClass("header-error-visible");
+                } else {
+                    $("#header-error").removeClass("header-error-visible");
+                }
+            })
+        })
+    </script>
+
+    <div class="header">
+        <table width="100%">
+            <tr>
+                <td>
+                    <img class="header-title" src="@routes.Assets.at("images/title.png")" />
+                </td>
+                <td>
+                    <div class="header-bottom">
+                        <div class="home-search">
+                            <span class="fa fa-map-marker fa-2x header-search-field-icon"></span>
+                            <select class="search-field" id="search-where" title="Please select a location.">
+                                <option value="">Where?</option>
+                                @for(region <- regions){
+                                  <option value="@region.regionId">@region.regionName</option>
+                                }
+                            </select>
+
+                            <span class="fa fa-calendar fa-2x header-search-field-icon"></span>
+                            <select class="search-field" id="search-when" title="Please select dates.">
+                                <option value="">When?</option>
+                                <option value="val1">Val1</option>
+                                <option value="val2">Val2?</option>
+                            </select>
+
+                            <span class="fa fa-briefcase fa-2x header-search-field-icon"></span>
+                            <select class="search-field" id="search-what" title="Please select a subject.">
+                                <option value="">What?</option>
+                                @for(jobType <- jobTypes){
+                                  <option value="@jobType.typeId">@jobType.typeName</option>
+                                }
+                            </select>
+
+                            <a class="btn btn-holyjoby btn-home" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-jobs-button" title="Click to search for jobs.">Money, to me!</a>
+                        </div>
+
+                        <table class="header-job-proposition">
+                            <tr>
+                                <td class="header-job-proposition-static-cell">
+                                    <span class="header-job-proposition-text">You already have money to take care of your mummy and are here to <strong>propose a job</strong> for holidays?</span>
+                                </td>
+                                <td class="header-job-proposition-static-cell">
+                                    <a class="btn btn-holyjoby btn-header-proposition" href='@routes.Application.add()'>Click here</a>
+                                </td>
+                                <td class="header-proposition-separator"></td>
+                                <td>
+                                    <div class="panel panel-danger header-error" id="header-error">
+                                        <div class="panel-heading" id="header-error-content">
+                                            Please select a location.
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+}

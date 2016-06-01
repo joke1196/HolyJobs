@@ -1,0 +1,195 @@
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])
+
+@main("HolyJobs") {
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Animate the home page when the user scrolls.
+            $(window).on("scroll", function () {
+                var homeBottomTop = $("#home-bottom").position().top - $("#home-title").height();
+                var titleOpacity = ($(window).scrollTop() / homeBottomTop);
+                var percentOfScrollingToBottom = ($(window).scrollTop() / $("#home-bottom").position().top);
+                var homeTitleBottomMiddlePosition = ($("#home-page-top").height() - $("#home-bottom").position().top - $("#home-title-bottom").height()) / 2;
+
+                // Move the main title to the top and make it transparent.
+                $("#helper").css("height", "calc(25% + " + $(window).scrollTop() / 2.5 + "px)");
+                $("#home-title").css("opacity", 1 - titleOpacity);
+                // Move the second main-title to the top so it will apear to the screen.
+                $("#home-title-bottom").css("bottom", "calc(" + homeTitleBottomMiddlePosition + "px - (150px + 3.8vh) * " + Math.max(1 - percentOfScrollingToBottom, 0) + ")");
+            })
+
+            // Occurs when the user clicked on the "Money, to me!" button.
+            $("#search-jobs-button").click(function() {
+                var whereValue = $("#search-where").val();
+                var whenValue = $("#search-when").val();
+                var whatValue = $("#search-what").val();
+                var valid = true;
+
+                // Hides the error tooltip if the user selected a location.
+                if (whereValue) {
+                    $("#search-where").tooltip('hide');
+                // Otherwise shows it and indicates the system the fields are
+                // not valid.
+                } else {
+                    $("#search-where").tooltip('show');
+                    valid = false;
+                }
+
+                if (whenValue) {
+                    $("#search-when").tooltip('hide');
+                } else {
+                    $("#search-when").tooltip('show');
+                    valid = false;
+                }
+
+                if (whatValue) {
+                    $("#search-what").tooltip('hide');
+                } else {
+                    $("#search-what").tooltip('show');
+                    valid = false;
+                }
+
+                // If every field is valid scroll the screen down.
+                if (valid) {
+                    $("html, body").animate({
+                        "scrollTop": $("#home-bottom").position().top
+                    }, 1000);
+                }
+            })
+        })
+    </script>
+
+    <div class="home-page-top" id="home-page-top">
+        <span class="helper" id="helper"></span>
+        <div class="home-title-panel" id="home-title" >
+            Looking for a job for your holidays?
+            <br/>
+            <img class="home-title" src="@routes.Assets.at("images/title.png")" />
+            <br/>
+            <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
+        </div>
+
+        <img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" />
+
+        <div class="home-bottom" id="home-bottom">
+            <div class="home-search">
+                <span class="fa fa-map-marker fa-2x search-field-icon"></span>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" title="Please select a location.">
+                    <option value="">Where?</option>
+                    @for(region <- regions){
+                      <option value="@region.regionId">@region.regionName</option>
+                    }
+                </select>
+
+                <span class="fa fa-calendar fa-2x search-field-icon"></span>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-when" title="Please select dates.">
+                    <option value="">When?</option>
+                    <option value="val1">Val1</option>
+                    <option value="val2">Val2?</option>
+                </select>
+
+                <span class="fa fa-briefcase fa-2x search-field-icon"></span>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" title="Please select a subject.">
+                    <option value="">What?</option>
+                    @for(jobType <- jobTypes){
+                      <option value="@jobType.typeId">@jobType.typeName</option>
+                    }
+                </select>
+
+                <a class="btn btn-holyjoby btn-home" id="search-jobs-button">Money, to me!</a>
+            </div>
+
+            <div class="home-proposition">
+                <span class="job-proposition-label">You already have money to take care of your mummy and are here to <strong>propose a job</strong> for holidays?</span>
+                <a class="btn btn-holyjoby btn-home" href='@routes.Application.add()'>Click here</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="jobs-title">Woohoo, here are the jobs!</div>
+
+    <div class="home-page-bottom" id="home-page-bottom">
+      <ul>
+      @for(job <- jobs) {
+        <li>@job.name</li>
+        <li>@job.startDate</li>
+        <li>@job.endDate</li>
+      }
+    </ul>
+        <div class="job-row">
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job2" class="job-element-image" src="@routes.Assets.at("images/jobs/job2.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Redneck Cowboy</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job3" class="job-element-image" src="@routes.Assets.at("images/jobs/job3.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Toothpaste Seller</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job3" class="job-element-image" src="@routes.Assets.at("images/jobs/job4.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Duck Feeder</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="job-row">
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-element">
+                <div class="job-element-content">
+                    <img alt="job1" class="job-element-image" src="@routes.Assets.at("images/jobs/job1.jpg")" />
+                    <div class="job-element-title">
+                        <strong>Computer Trainee</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
