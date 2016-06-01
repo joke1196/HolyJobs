@@ -25,9 +25,16 @@ import java.sql.Date
 import play.api.mvc.Action
 import play.api.mvc.Controller
 
+import play.api.data.Forms._
+import play.api.data._
+import play.api.data.format.Formats._
+
+import play.api.i18n.I18nSupport
+import play.api.i18n.MessagesApi
 
 
-class Application @Inject() extends Controller {
+
+class Application @Inject() (val messagesApi :MessagesApi)extends Controller with I18nSupport {
   private val db = Database.forConfig("h2mem1")
 
   def index = Action { implicit rs =>
@@ -60,14 +67,33 @@ class Application @Inject() extends Controller {
   def add = Action {
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.add(jobTypes, regions))
+    Ok(views.html.add(jobForm,jobTypes, regions))
   }
 
-  def createJob = Action {
-    val jobTypes : List[Type] = Types.all
-    val regions : List[Region] = Regions.all
-    Ok(views.html.add(jobTypes, regions))
+  def createJob = Action { implicit request =>
+    jobForm.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.add(formWithErrors, Types.all,Regions.all)),
+      job => {
+        val inserting = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email)
+      }
+    )
+    Ok(views.html.index(Jobs.all, Types.all, Regions.all))
   }
+
+  def jobForm:Form[Job] = Form(
+    mapping(
+      "name" -> nonEmptyText,
+     "description" ->text,
+     "startDate" -> sqlDate,
+     "endDate" -> sqlDate,
+     "jobType" -> number,
+     "region" ->number,
+     "hourlyPay" -> of(doubleFormat),
+     "workingTime" -> number (min = 0, max = 100),
+     "email" -> email,
+     "id" -> optional(number)
+   )(Job.apply)(Job.unapply)
+  )
 
 
 }

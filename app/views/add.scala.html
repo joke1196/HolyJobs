@@ -1,5 +1,5 @@
-@(jobTypes: List[database.Type], regions : List[database.Region])
-
+@(jobForm:Form[database.Job], jobTypes: List[database.Type], regions : List[database.Region])(implicit messages :Messages)
+@import helper._
 @main("Add a job - HolyJobs") {
     <script>
         $(document).ready(function() {
@@ -26,6 +26,19 @@
             })
         })
     </script>
+    @helper.form(action = routes.Application.createJob){
+      @inputText(jobForm("name"))
+      @inputText(jobForm("description"))
+      @inputText(jobForm("startDate"))
+      @inputText(jobForm("endDate"))
+      @inputText(jobForm("jobType"))
+      @inputText(jobForm("region"))
+      @inputText(jobForm("hourlyPay"))
+      @inputText(jobForm("workingTime"))
+      @inputText(jobForm("email"))
+
+      <input type="submit" value="Submit">
+    }
 
     <div class="header">
         <table width="100%">
