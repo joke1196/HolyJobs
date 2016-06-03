@@ -37,9 +37,22 @@ object Jobs {
   val jobTable = TableQuery[Jobs]
 
 
-  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String]) = {
-
-    Await.result(db.run(jobTable += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, img )), Duration.Inf)
+  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String]):Int= {
+      if(img != None){
+        // into ((jobTable, img) => jobTable.copy(img = Some("/tmp/id" + img)))
+        val jobId = Await.result(db.run{
+          (jobTable returning jobTable.map(_.id)) += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, None )
+        }, Duration.Inf)
+        updateImgPath(jobId, img.get)
+        jobId
+      }else {
+        Await.result(db.run(  (jobTable returning jobTable.map(_.id)) += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, Some("/tmp/noImg.jpeg") ) ), Duration.Inf)
+      }
+  }
+  def updateImgPath(id:Int, img:String)={
+    val imgPath = for{j <- jobTable if j.id === id} yield j.img
+    val updateAction = imgPath.update("/tmp/"+ id +img)
+    Await.result(db.run(updateAction) ,Duration.Inf)
   }
 
   def all(): List[Job] = (for (j <- Await.result(db.run(jobTable.result), Duration.Inf)) yield j).toList

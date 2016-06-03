@@ -72,6 +72,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
 
   def createJob = Action(parse.multipartFormData) { implicit request =>
     val form = jobForm.bindFromRequest()
+    var jobId = 0
     println(form.toString)
     form.fold(
       formWithErrors => {
@@ -82,16 +83,18 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           case Some(file) => {
             import java.io.File
             val filename = file.filename
-            println(filename)
+            jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some(filename))
+            println("ID---------------" + jobId)
             val contentType = file.contentType
-            file.ref.moveTo(new File(s"tmp/" + file.filename))
-            Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/" + filename))
+            file.ref.moveTo(new File(s"tmp/"+ jobId + file.filename))
           }
-          case _ => Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/noImg.jpeg"))
+          case _ => jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/noImg.jpeg"))
         }
       }
     )
-    Ok(views.html.index(Jobs.all, Types.all, Regions.all))
+    val jobDetails: Option[Job] = Jobs.byID(jobId)
+    val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
+    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
   }
 
   def jobForm:Form[Job] = Form(
