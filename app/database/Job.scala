@@ -12,6 +12,8 @@ import slick.driver.MySQLDriver.api._
 
 import java.sql.Date
 
+case class FilterJob(jobType:Int, region:Int, startDate:Date)
+
 case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String] = None, id: Option[Int] = None)
 
 class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
@@ -68,6 +70,11 @@ object Jobs {
       val job = for (j <- Await.result(db.run(jobTable.filter(_.jobType === typeId).filter(_.id =!= id).result), Duration.Inf)) yield j
       if(job.isEmpty) None
       else Some(job.take(5).toList)
+  }
+
+  def filteredJobs(jobType: Int, region:Int, startDate:Date):List[Job] = {
+    val job = for(j <- Await.result(db.run(jobTable.filter(_.jobType === jobType).filter(_.region === region).filter(_.startDate >= startDate).result), Duration.Inf)) yield j
+    job.toList
   }
 
 }

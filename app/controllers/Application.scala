@@ -41,7 +41,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     val resultingJobs: List[Job] = Jobs.all
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.index(resultingJobs, jobTypes, regions))
+    Ok(views.html.index(resultingJobs, jobTypes, regions, filterForm))
   }
 
   private def createDB() = {
@@ -52,6 +52,21 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     }
     val setup = DBIO.seq(Jobs.jobTable.schema.create /*, Tables.data.schema.create */)
     Await.result(db.run(setup), Duration.Inf)
+  }
+
+  def filterJob = Action { implicit rs =>
+    val form = filterForm.bindFromRequest()
+    println(form.toString)
+    form.fold(
+      formWithErrors => {
+        BadRequest(views.html.index(Jobs.all, Types.all,Regions.all, filterForm))
+      },
+      job => {
+        val jobList = Jobs.filteredJobs(job.jobType, job.region, job.startDate)
+        Ok(views.html.index(jobList, Types.all, Regions.all, filterForm))
+      }
+    )
+
   }
 
   def details(id: Int) = Action {
@@ -99,7 +114,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
 
   def jobForm:Form[Job] = Form(
     mapping(
-      "name" -> nonEmptyText,
+    "name" -> nonEmptyText,
      "description" ->text,
      "startDate" -> sqlDate,
      "endDate" -> sqlDate,
@@ -112,6 +127,12 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
      "id" -> optional(number)
    )(Job.apply)(Job.unapply)
   )
-
+  def filterForm:Form[FilterJob] = Form(
+    mapping(
+      "jobType" -> number,
+      "region" -> number,
+      "startDate" -> sqlDate
+    )(FilterJob.apply)(FilterJob.unapply)
+  )
 
 }

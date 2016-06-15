@@ -1,5 +1,5 @@
-@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])
-
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region], filterForm : Form[database.FilterJob])
+@import helper._
 @main("HolyJobs") {
     <script>
         $(document).ready(function() {
@@ -71,34 +71,35 @@
         </div>
 
         <img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" />
+        @helper.form(action = routes.Application.filterJob){
 
         <div class="home-bottom" id="home-bottom">
             <div class="home-search">
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
-                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" title="Please select a location.">
-                    <option value="">Where?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" name="region" title="Please select a location.">
+                    <option value="" name="region">Where?</option>
                     @for(region <- regions){
-                      <option value="@region.regionId">@region.regionName</option>
+                      <option value="@region.regionId" name="region">@region.regionName</option>
                     }
                 </select>
 
                 <span class="fa fa-calendar fa-2x search-field-icon"></span>
-                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-when" title="Please select dates.">
-                    <option value="">When?</option>
-                    <option value="val1">Val1</option>
-                    <option value="val2">Val2?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-when" name="startDate" title="Please select dates.">
+                    <option value="" name="startDate">When?</option>
+                    <option value="2016-07-08" name="startDate">Val1</option>
+                    <option value="2016-07-09" name="startDate">Val2?</option>
                 </select>
 
                 <span class="fa fa-briefcase fa-2x search-field-icon"></span>
-                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" title="Please select a subject.">
-                    <option value="">What?</option>
+                <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" name="jobType" title="Please select a subject.">
+                    <option value="" name="jobType">What?</option>
                     @for(jobType <- jobTypes){
-                      <option value="@jobType.typeId">@jobType.typeName</option>
+                      <option value="@jobType.typeId" name="jobType">@jobType.typeName</option>
                     }
                 </select>
-
-                <a class="btn btn-holyjoby btn-home" id="search-jobs-button">Money, to me!</a>
+                <input class="btn btn-holyjoby btn-home" id="search-jobs-button" type="submit" value="Money, to me!">Money, to me!</input>
             </div>
+          }
 
             <div class="home-proposition">
                 <span class="job-proposition-label">You already have money to take care of your mummy and are here to <strong>propose a job</strong> for holidays?</span>
