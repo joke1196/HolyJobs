@@ -1,5 +1,5 @@
-@(jobTypes: List[database.Type], regions : List[database.Region])
-
+@(jobForm:Form[database.Job], jobTypes: List[database.Type], regions : List[database.Region])(implicit messages :Messages)
+@import helper._
 @main("Add a job - HolyJobs") {
     <script>
         $(document).ready(function() {
@@ -26,6 +26,31 @@
             })
         })
     </script>
+    @helper.form(action = routes.Application.createJob, 'enctype -> "multipart/form-data"){
+      @inputText(jobForm("name"))
+      @textarea(jobForm("description") )
+      @inputDate(jobForm("startDate"))
+      @inputText(jobForm("endDate"))
+      @select(jobForm("jobType"),
+        options = jobTypes.map(
+        t => t.typeId.get.toString -> t.typeName
+        ).toSeq,
+         '_showConstraints -> false
+      )
+      @select(jobForm("region"),
+      options = regions.map(
+      r  => r.regionId.get.toString -> r.regionName
+      ).toSeq,
+        '_showConstraints -> false
+      )
+      @inputText(jobForm("hourlyPay"), '_showConstraints -> false)
+      @inputText(jobForm("workingTime"))
+      @inputText(jobForm("email"), '_showConstraints -> false)
+    
+      <input type="file" name="img"></input>
+
+      <input type="submit" value="Submit">
+    }
 
     <div class="header">
         <table width="100%">

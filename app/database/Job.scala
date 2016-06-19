@@ -12,7 +12,9 @@ import slick.driver.MySQLDriver.api._
 
 import java.sql.Date
 
-case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Float, workingTime:Int, email:String, id: Option[Int] = None)
+case class FilterJob(jobType:Int, region:Int, startDate:Date)
+
+case class Job(name: String, description:String, startDate: Date, endDate:Date,jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String] = None, id: Option[Int] = None)
 
 class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -22,13 +24,14 @@ class Jobs(tag: Tag) extends Table[Job](tag, "jobs") {
   def endDate = column[Date]("endDate")
   def jobType = column[Int]("jobType")
   def region = column[Int]("region")
-  def hourlyPay = column[Float]("hourlyPay")
+  def hourlyPay = column[Double]("hourlyPay")
   def workingTime = column[Int]("workingTime")
   def email = column[String]("email")
+  def img = column[String]("img")
   def typeId = foreignKey("typeId", jobType, Types.typeTable)(_.typeId)
   def regionId = foreignKey("regionId", region, Regions.regionTable)(_.regionId)
 
-  def * = (name, description, startDate, endDate, jobType, region, hourlyPay, workingTime, email, id.?)<>((Job.apply _).tupled, Job.unapply)
+  def * = (name, description, startDate, endDate, jobType, region, hourlyPay, workingTime, email,img.?, id.?)<>((Job.apply _).tupled, Job.unapply)
 }
 
 object Jobs {
@@ -36,8 +39,23 @@ object Jobs {
   val jobTable = TableQuery[Jobs]
 
 
-  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Float, workingTime:Int, email:String) =
-    Await.result(db.run(DBIO.seq(jobTable += Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email ))), Duration.Inf)
+  def insert(name: String,description:String, startDate: Date, endDate: Date, jobType:Int, region:Int, hourlyPay:Double, workingTime:Int, email:String, img:Option[String]):Int= {
+      if(img != None){
+        // into ((jobTable, img) => jobTable.copy(img = Some("/tmp/id" + img)))
+        val jobId = Await.result(db.run{
+          (jobTable returning jobTable.map(_.id)) += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, None )
+        }, Duration.Inf)
+        updateImgPath(jobId, img.get)
+        jobId
+      }else {
+        Await.result(db.run(  (jobTable returning jobTable.map(_.id)) += new Job(name, description, startDate, endDate,jobType, region, hourlyPay, workingTime, email, Some("/tmp/noImg.jpeg") ) ), Duration.Inf)
+      }
+  }
+  def updateImgPath(id:Int, img:String)={
+    val imgPath = for{j <- jobTable if j.id === id} yield j.img
+    val updateAction = imgPath.update("/tmp/"+ id +img)
+    Await.result(db.run(updateAction) ,Duration.Inf)
+  }
 
   def all(): List[Job] = (for (j <- Await.result(db.run(jobTable.result), Duration.Inf)) yield j).toList
   // def insert(job: Job): Future[Unit] = dbConfig.db.run(jobs += job).map { _ => () }
@@ -52,6 +70,11 @@ object Jobs {
       val job = for (j <- Await.result(db.run(jobTable.filter(_.jobType === typeId).filter(_.id =!= id).result), Duration.Inf)) yield j
       if(job.isEmpty) None
       else Some(job.take(5).toList)
+  }
+
+  def filteredJobs(jobType: Int, region:Int, startDate:Date):List[Job] = {
+    val job = for(j <- Await.result(db.run(jobTable.filter(_.jobType === jobType).filter(_.region === region).filter(_.startDate >= startDate).result), Duration.Inf)) yield j
+    job.toList
   }
 
 }
