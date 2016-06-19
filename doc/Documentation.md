@@ -3,7 +3,8 @@ David Kunzmann & Miguel Santamaria - 19.06.2016
 # Introduction
 Ce document fait office de rapport pour le projet qui a été réalisé durant le cours de Scala de 3ème année de l'HEIG-VD en filière TIC.  
 Nous avons décidé de réaliser un projet de gestion de jobs de vacances, à l'aide d'une application Web implémentant un back-end (Play), un front-end (Scala.js) et une base de données (Slick). Dans cette application, il est possible de rechercher et de postuler pour des jobs, ou même d'en proposer un ! Le site contient 3 pages : la page d'accueil / de recherche, la page de détails d'un job et la page d'ajout d'un job.  
-Le travail a été séparé en deux : David s'occupe du back-end et de la base de données, tandis que Miguel s'occupe du front-end tout en travaillant avec certaines actions du back-end.
+Le travail a été séparé en deux : David s'occupe du back-end et de la base de données, tandis que Miguel s'occupe du front-end tout en travaillant avec certaines actions du back-end.  
+Pour utiliser le programme, il faut tout d'abord installer Play Framework et Activator (https://www.playframework.com/documentation/2.5.x/Installing), puis ensuite se rendre à la racine du dossier HolyJobs, et taper `activator run`.
 
 # Scala.js
 ## Introduction
