@@ -85,7 +85,10 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
                   "id" -> JsNumber(job.id.get),
                   "name" -> JsString(job.name),
                   "description" -> JsString(job.description),
+                  "startDate" -> JsString(dateFormat.format(job.startDate)),
+                  "endDate" -> JsString(dateFormat.format(job.endDate)),
                   "hourlyPay" -> JsNumber(job.hourlyPay),
+                  "workingTime" -> JsNumber(job.workingTime),
                   "image" -> JsString(job.img.get)
               )
           }))))
