@@ -96,18 +96,45 @@ $(document).ready(function() {
                                 $("#home-page-bottom").append('<div class="job-row" id="job-row-' + currentRowNumber + '"></div>');
                             }
 
+
+                            /*<div class="job-element-hidden-details">\
+                                ' + msg.jobs[i].description + '\
+                            </div>\*/
+
                             $("#job-row-" + currentRowNumber).append(
                                 '<div class="job-element">\
                                     <a href="/details/' + msg.jobs[i].id + '">\
-                                        <div class="job-element-content">\
-                                                <img alt="job1" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
+                                        <div class="job-element-content" id="job-element-content-' + msg.jobs[i].id + '">\
+                                            <img alt="job1" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
                                             <div class="job-element-title">\
-                                                <strong>' + msg.jobs[i].name + '</strong>\
+                                                <div class="job-element-title-text">' + msg.jobs[i].name + '</div>\
+                                                <div class="job-element-details">\
+                                                    <p>« ' + msg.jobs[i].description + '\" »</p>\
+                                                    <p>Available<br/>from <strong>' + msg.jobs[i].startDate + '</strong> to <strong>' + msg.jobs[i].endDate + '</strong></p>\
+                                                    <p>\
+                                                        <strong>CHF ' + msg.jobs[i].hourlyPay + '</strong> / hour<br/>\
+                                                        Working Time: <strong>' + msg.jobs[i].workingTime + ' hours</strong>\
+                                                    </p>\
+                                                </div>\
                                             </div>\
                                         </div>\
                                     </a>\
                                 </div>'
                             );
+
+                            // Configures the hover event in order to display
+                            // job's details when the user moves the mouse on
+                            // the job.
+                            $("#job-element-content-" + msg.jobs[i].id).hover(
+                                function() {
+                                    $(".job-element-title", this).addClass("job-element-title-details");
+                                    $(".job-element-title-text", this).addClass("job-element-title-text-hover");
+                                },
+                                function() {
+                                    $(".job-element-title", this).removeClass("job-element-title-details");
+                                    $(".job-element-title-text", this).removeClass("job-element-title-text-hover");
+                                }
+                            )
                         }
 
                         // If there was no enough results to complete a whole line,

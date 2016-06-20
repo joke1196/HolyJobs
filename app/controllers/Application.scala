@@ -82,10 +82,13 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           // Returns the jobs list as a JSON array.
           Ok(JsObject(Seq("jobs" -> JsArray(jobsList.map {
               job => Json.obj(
-                  "id" -> JsNumber(job.id.get), 
+                  "id" -> JsNumber(job.id.get),
                   "name" -> JsString(job.name),
                   "description" -> JsString(job.description),
+                  "startDate" -> JsString(dateFormat.format(job.startDate)),
+                  "endDate" -> JsString(dateFormat.format(job.endDate)),
                   "hourlyPay" -> JsNumber(job.hourlyPay),
+                  "workingTime" -> JsNumber(job.workingTime),
                   "image" -> JsString(job.img.get)
               )
           }))))

@@ -1,6 +1,8 @@
 @holyjobs-color: #1b4468;
 @border-color: #484848;
 @home-bottom-spacing: 3.8vh;
+@job-element-font-size: 1vw;
+@job-element-padding: 5%;
 
 // ================================== LAYOUT ===================================
 @font-face {
@@ -343,9 +345,35 @@ select::-ms-expand {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     bottom: 0;
-    font-size: 1.2em;
-    padding: 5%;
+    height: ~"calc(@{job-element-font-size} + 2 * @{job-element-padding} + 4px)";
+    overflow: hidden;
+    padding: @job-element-padding;
     position: absolute;
     text-align: center;
+    transition: height 300ms;
     width: 100%;
+}
+
+.job-element-title-details {
+    height: 100%;
+}
+
+.job-element-title-text {
+    font-size: @job-element-font-size;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.job-element-title-text-hover {
+    white-space: normal;
+}
+
+.job-element-details {
+    font-size: 0.8vw;
+    margin-top: 40%;
+    transform: translateY(-50%);
 }
