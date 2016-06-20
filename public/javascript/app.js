@@ -55,10 +55,6 @@ $(document).ready(function() {
             valid = false;
         }
 
-        console.log("WHERE? " + whereValue);
-        console.log("WHEN? " + whenValue);
-        console.log("WHAT? " + whatValue);
-
         // If every field is valid send an AJAX request to get the jobs.
         if (valid) {
             $.ajax({
@@ -102,12 +98,14 @@ $(document).ready(function() {
 
                             $("#job-row-" + currentRowNumber).append(
                                 '<div class="job-element">\
-                                    <div class="job-element-content">\
-                                        <img alt="job1" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
-                                        <div class="job-element-title">\
-                                            <strong>' + msg.jobs[i].name + '</strong>\
+                                    <a href="/details/' + msg.jobs[i].id + '">\
+                                        <div class="job-element-content">\
+                                                <img alt="job1" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
+                                            <div class="job-element-title">\
+                                                <strong>' + msg.jobs[i].name + '</strong>\
+                                            </div>\
                                         </div>\
-                                    </div>\
+                                    </a>\
                                 </div>'
                             );
                         }
