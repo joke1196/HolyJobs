@@ -77,6 +77,7 @@ object Jobs {
       else Some(job.take(5).toList)
   }
 
+  
   /* Returns all the jobs filtered by its type,region and date.
   *  For the date, a job is returnes if the date provided is inbetween its start and end date
   */

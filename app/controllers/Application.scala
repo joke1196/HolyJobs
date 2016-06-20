@@ -97,12 +97,17 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           BadRequest("errorField");
       }
   }
-
+  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)={
+    val jobTypeName: String = Types.typeName(jobTypeId).get.typeName
+    val regionName : String = Regions.regionName(regionId).get.regionName
+    (regionName, jobTypeName)
+  }
 
   def details(id: Int) = Action {
     val jobDetails: Option[Job] = Jobs.byID(id)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   // def apply = Action {
@@ -138,7 +143,8 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     )
     val jobDetails: Option[Job] = Jobs.byID(jobId)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   def jobForm:Form[Job] = Form(
