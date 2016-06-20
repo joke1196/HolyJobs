@@ -81,7 +81,13 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
 
           // Returns the jobs list as a JSON array.
           Ok(JsObject(Seq("jobs" -> JsArray(jobsList.map {
-              job => Json.obj("name" -> JsString(job.name), "description" -> JsString(job.description), "hourlyPay" -> JsNumber(job.hourlyPay), "image" -> JsString(job.img.get))
+              job => Json.obj(
+                  "id" -> JsNumber(job.id.get), 
+                  "name" -> JsString(job.name),
+                  "description" -> JsString(job.description),
+                  "hourlyPay" -> JsNumber(job.hourlyPay),
+                  "image" -> JsString(job.img.get)
+              )
           }))))
       // Otherwise generate a bad request error.
       } else {
