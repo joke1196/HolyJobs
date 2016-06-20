@@ -32,6 +32,9 @@ import play.api.data.format.Formats._
 import play.api.i18n.I18nSupport
 import play.api.i18n.MessagesApi
 
+import play.api.libs.json._
+import java.util.Date
+
 
 
 class Application @Inject() (val messagesApi :MessagesApi)extends Controller with I18nSupport {
@@ -52,6 +55,36 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     }
     val setup = DBIO.seq(Jobs.jobTable.schema.create /*, Tables.data.schema.create */)
     Await.result(db.run(setup), Duration.Inf)
+  }
+
+  def ajaxCall = Action { request =>
+      var jobType, region = -1;
+      var startDate = new java.util.Date();
+      var valid = true
+      val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
+
+      // Tries to get the parameters values and to convert them.
+      // If an error occurs, it means one parameter has not been properly set.
+      try {
+          jobType = request.queryString.get("jobType").flatMap(_.headOption).get.toInt
+          region = request.queryString.get("region").flatMap(_.headOption).get.toInt
+          startDate = dateFormat.parse(request.queryString.get("startDate").flatMap(_.headOption).get)
+      } catch {
+          case e: java.lang.NumberFormatException => valid = false
+      }
+
+      // Gets the jobs and returns them if the parameters were valid.
+      if (valid) {
+          val jobsList = Jobs.filteredJobs(jobType, region, new java.sql.Date(startDate.getTime()))
+
+          // Returns the jobs list as a JSON array.
+          Ok(JsObject(Seq("jobs" -> JsArray(jobsList.map {
+              job => Json.obj("name" -> JsString(job.name), "description" -> JsString(job.description), "hourlyPay" -> JsNumber(job.hourlyPay), "image" -> JsString(job.img.get))
+          }))))
+      // Otherwise generate a bad request error.
+      } else {
+          BadRequest("errorField");
+      }
   }
 
   def filterJob = Action { implicit rs =>
@@ -127,6 +160,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
      "id" -> optional(number)
    )(Job.apply)(Job.unapply)
   )
+
   def filterForm:Form[FilterJob] = Form(
     mapping(
       "jobType" -> number,

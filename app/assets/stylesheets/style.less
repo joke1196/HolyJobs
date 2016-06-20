@@ -121,6 +121,44 @@ body {
     box-shadow: 0 0 2px black;
 }
 
+.no-result-panel {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid #484848;
+    border-left: 2px solid #484848;
+    border-top: 2px solid #484848;
+    color: white;
+    font-size: 1.5vh;
+    font-weight: bold;
+    padding: 5vh;
+    position: absolute;
+    right: -20%;
+    text-align: center;
+    transition: right 500ms;
+    transform: translateY(-50%);
+    top: 39%;
+    width: 17%;
+}
+
+.no-result-panel-visible {
+    right: 0;
+}
+
+.smiley {
+    font-size: 3vh;
+    transition: font-size 350ms;
+}
+
+.smiley-big {
+    font-size: 6vh;
+}
+
+.btn-no-result {
+    font-size: 0.8vw;
+    font-weight: bold;
+    margin-top: 2vh;
+    width: 100%;
+}
+
 .helper {
     display: inline-block;
     height: 25%;
@@ -198,7 +236,12 @@ select::-ms-expand {
     width: 90%;
 }
 
-.btn-home {
+.btn-home-1 {
+    .search-fields;
+    width: 20%;
+}
+
+.btn-home-2 {
     .search-fields;
 }
 
