@@ -21,8 +21,15 @@ object Regions {
 
   val db = Database.forConfig("h2mem1")
   lazy val regionTable = TableQuery[Regions]
-
+  /* Returns all region in the database
+  */
   def all():List[Region]= {
     (for (t <- Await.result(db.run(regionTable.result), Duration.Inf)) yield t).toList
+  }
+  /* Returns a region by its id
+  */
+  def regionName(regionId:Int):Option[Region] ={
+    val rName = Await.result(db.run(regionTable.filter(_.regionId === regionId).result), Duration.Inf)
+    if(rName.isEmpty) None else Some(rName.head)
   }
 }

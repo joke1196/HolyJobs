@@ -111,7 +111,7 @@ $(document).ready(function() {
                                                     <p>Available<br/>from <strong>' + msg.jobs[i].startDate + '</strong> to <strong>' + msg.jobs[i].endDate + '</strong></p>\
                                                     <p>\
                                                         <span class="job-element-price">CHF ' + msg.jobs[i].hourlyPay + '</span> / hour<br/>\
-                                                        Working Time: <strong>' + msg.jobs[i].workingTime + ' hours</strong>\
+                                                        Working Time: <strong>' + msg.jobs[i].workingTime + ' hours per week</strong>\
                                                     </p>\
                                                 </div>\
                                             </div>\

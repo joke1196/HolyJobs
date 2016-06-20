@@ -398,12 +398,13 @@ select::-ms-expand {
 
 // =============================== DETAILS PAGE ================================
 .job-details-panel {
-    margin: 8vh 0 0 50%;
+    margin: 6vh 0 0 50%;
     transform: translateX(-50%);
-    width: 50%;
+    width: 900px;
 }
 
 .job-details-subpanel {
+    margin-bottom: 10vh;
     padding: 0 2.5vw;
     width: 50%;
 }
@@ -421,6 +422,29 @@ select::-ms-expand {
 
 .related-jobs {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.related-job {
+    border: 1px solid #bbb;
+    margin: 0 1% 1vh 0;
+    max-width: 32%;
+    position: relative;
+}
+
+.related-job-picture {
+    max-width: 100%;
+}
+
+.related-job-title {
+    background-color: rgba(255, 255, 255, 0.9);
+    bottom: 0;
+    left: 0;
+    max-height: 100%;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    width: 100%;
 }
 
 .job-details-right {
@@ -448,9 +472,19 @@ select::-ms-expand {
     margin: 0 0 20px;
 }
 
+.job-details-salary {
+    font-size: 1.5em;
+}
+
 .btn-apply {
     font-size: 1.5em;
     font-weight: bold;
     margin-top: 20px;
     width: 100%;
+}
+
+.link-home {
+    float: right;
+    font-size: 1.3em;
+    margin-top: 80px;
 }

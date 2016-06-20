@@ -44,7 +44,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     val resultingJobs: List[Job] = Jobs.all
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.index(resultingJobs, jobTypes, regions, filterForm))
+    Ok(views.html.index(resultingJobs, jobTypes, regions))
   }
 
   private def createDB() = {
@@ -113,12 +113,20 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
 
 }*/
 
+  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)= {
+    val jobTypeName: String = Types.typeName(jobTypeId).get.typeName
+    val regionName : String = Regions.regionName(regionId).get.regionName
+    (regionName, jobTypeName)
+  }
+
   def details(id: Int) = Action {
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(id)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
-    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   // def apply = Action {
@@ -145,7 +153,6 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
             import java.io.File
             val filename = file.filename
             jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some(filename))
-            println("ID---------------" + jobId)
             val contentType = file.contentType
             file.ref.moveTo(new File(s"tmp/"+ jobId + file.filename))
           }
@@ -157,7 +164,9 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(jobId)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
-    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   def jobForm:Form[Job] = Form(
@@ -175,13 +184,4 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
      "id" -> optional(number)
    )(Job.apply)(Job.unapply)
   )
-
-  def filterForm:Form[FilterJob] = Form(
-    mapping(
-      "jobType" -> number,
-      "region" -> number,
-      "startDate" -> sqlDate
-    )(FilterJob.apply)(FilterJob.unapply)
-  )
-
 }

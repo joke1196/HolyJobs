@@ -1,4 +1,4 @@
-@(jobTypes: List[database.Type], regions : List[database.Region], job: database.Job, relatedJobs : List[database.Job])
+@(jobTypes: List[database.Type], regions : List[database.Region], job: database.Job, relatedJobs : List[database.Job], regionName:String, typeName:String)
 
 @main(job.name + " - HolyJobs") {
     @* Calls the header search-bar. *@
@@ -11,14 +11,22 @@
                     <img alt="@job.name" class="job-details-image" src="@routes.Assets.at("images/jobs/" + job.img.get)" />
                 </a>
 
+                <h3>Related Jobs</h3>
+
                 @if(!relatedJobs.isEmpty) {
-                    <h3>Related Jobs</h3>
 
                     <div class="related-jobs">
-                        @for(job <- relatedJobs) {
-                            <li>@job.name</li>
+                        @for(j <- relatedJobs) {
+                            <div class="related-job">
+                                <a href="@routes.Application.details(j.id.get)">
+                                    <img alt="@j.name" class="related-job-picture" src="@routes.Assets.at("images/jobs/" + j.img.get)" />
+                                    <div class="related-job-title">@j.name</div>
+                                </a>
+                            </div>
                         }
                     </div>
+                } else {
+                    There is no related job.
                 }
             </div>
             <div class="job-details-right">
@@ -32,21 +40,23 @@
 
                 <div class="job-details">
                     <p>
-                        <strong>Type:</strong> @job.jobType<br/>
-                        <strong>Region:</strong> @job.region
+                        <strong>Type:</strong> @typeName<br/>
+                        <strong>Region:</strong> @regionName
                     </p>
                     <p>
                         <strong>Description:</strong><br/>
                         <span>@job.description</span>
                     </p>
 
-                    <strong>Salary:</strong> @job.hourlyPay per hour<br/>
-                    <strong>Working time:</strong> @job.workingTime
+                    <strong>Salary:</strong> <span class="job-details-salary">CHF @job.hourlyPay</span> per hour<br/>
+                    <strong>Working time:</strong> @job.workingTime hours per week
                 </div>
 
                 <hr class="job-details-separation" />
 
                 <a class="btn btn-holyjoby btn-apply">Apply!</a>
+
+                <a class="link-home" href="@routes.Application.index()">Home</a>
             </div>
         </div>
     </div>
