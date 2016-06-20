@@ -111,6 +111,10 @@ body {
 
 
 // ================================= HOME PAGE =================================
+.pickmeup {
+    font-size: 0.75vw;
+}
+
 .home-page-top {
     background: rgba(0, 0, 0, 0) url("../images/home.jpg") no-repeat fixed 0 / cover;
     background-position: 0 0 fixed;
@@ -212,8 +216,6 @@ body {
 
 .search-fields {
     display: table-cell;
-    font-size: 14px;
-    font-size: 0.8vw;
     font-weight: bold;
     -moz-appearance: none;
 }
@@ -231,9 +233,31 @@ select::-ms-expand {
     background-size: 2vw;
     border: 2px solid @border-color;
     color: white;
+    cursor: pointer;
     letter-spacing: 0.5px;
     padding: 14px 15px;
     width: 90%;
+}
+
+.search-when {
+    min-width: 8.6vw;
+}
+
+// Sets the color of the search field's placeholder.
+.search-when::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    white;
+}
+
+.search-when:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    white;
+   opacity:  1;
+}
+.search-when::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    white;
+   opacity:  1;
+}
+.search-when:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    white;
 }
 
 .btn-home-1 {

@@ -3,6 +3,13 @@ var numberMaxOfJobsPerLine = 4;
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
+    // We used the nazar-pc's PickMeUp plugin (https://github.com/nazar-pc/PickMeUp)
+    // in order to display a nice calendar.
+    $('#search-when').pickmeup({
+		position		: 'top',
+		hide_on_select	: true
+	});
+
     // Animate the home page when the user scrolls.
     $(window).on("scroll", function () {
         var homeBottomTop = $("#home-bottom").position().top - $("#home-title").height();
@@ -47,6 +54,10 @@ $(document).ready(function() {
             $("#search-what").tooltip('show');
             valid = false;
         }
+
+        console.log("WHERE? " + whereValue);
+        console.log("WHEN? " + whenValue);
+        console.log("WHAT? " + whatValue);
 
         // If every field is valid send an AJAX request to get the jobs.
         if (valid) {

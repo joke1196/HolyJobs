@@ -61,7 +61,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
       var jobType, region = -1;
       var startDate = new java.util.Date();
       var valid = true
-      val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
+      val dateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
 
       // Tries to get the parameters values and to convert them.
       // If an error occurs, it means one parameter has not been properly set.
@@ -70,8 +70,10 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           region = request.queryString.get("region").flatMap(_.headOption).get.toInt
           startDate = dateFormat.parse(request.queryString.get("startDate").flatMap(_.headOption).get)
       } catch {
-          case e: java.lang.NumberFormatException => valid = false
+          case en: java.lang.NumberFormatException => valid = false
       }
+
+      println(startDate);
 
       // Gets the jobs and returns them if the parameters were valid.
       if (valid) {
