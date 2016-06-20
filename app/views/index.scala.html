@@ -1,5 +1,4 @@
-@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region], filterForm : Form[database.FilterJob])
-@import helper._
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])
 @main("HolyJobs") {
     <input id="ajaxUrl" type="hidden" value="@routes.Application.filterJobAjax()" />
 
