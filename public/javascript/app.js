@@ -57,6 +57,9 @@ $(document).ready(function() {
 
         // If every field is valid send an AJAX request to get the jobs.
         if (valid) {
+            $("#search-jobs-button").addClass("btn-home-disabled");
+            $("#search-jobs-button").text("Searching...");
+
             $.ajax({
                 method: "GET",
                 url: $("#ajaxUrl").val(),
@@ -96,23 +99,18 @@ $(document).ready(function() {
                                 $("#home-page-bottom").append('<div class="job-row" id="job-row-' + currentRowNumber + '"></div>');
                             }
 
-
-                            /*<div class="job-element-hidden-details">\
-                                ' + msg.jobs[i].description + '\
-                            </div>\*/
-
                             $("#job-row-" + currentRowNumber).append(
                                 '<div class="job-element">\
                                     <a href="/details/' + msg.jobs[i].id + '">\
                                         <div class="job-element-content" id="job-element-content-' + msg.jobs[i].id + '">\
-                                            <img alt="job1" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
+                                            <img alt="' + msg.jobs[i].name + '" class="job-element-image" src="/assets/images/jobs/' + msg.jobs[i].image + '" />\
                                             <div class="job-element-title">\
                                                 <div class="job-element-title-text">' + msg.jobs[i].name + '</div>\
                                                 <div class="job-element-details">\
-                                                    <p>« ' + msg.jobs[i].description + '\" »</p>\
+                                                    <p>« ' + msg.jobs[i].description + ' »</p>\
                                                     <p>Available<br/>from <strong>' + msg.jobs[i].startDate + '</strong> to <strong>' + msg.jobs[i].endDate + '</strong></p>\
                                                     <p>\
-                                                        <strong>CHF ' + msg.jobs[i].hourlyPay + '</strong> / hour<br/>\
+                                                        <span class="job-element-price">CHF ' + msg.jobs[i].hourlyPay + '</span> / hour<br/>\
                                                         Working Time: <strong>' + msg.jobs[i].workingTime + ' hours</strong>\
                                                     </p>\
                                                 </div>\
@@ -177,6 +175,11 @@ $(document).ready(function() {
 
                     $("#home-page-bottom").removeClass("home-page-bottom-transparent");
                 });
+
+                setTimeout(function() {
+                    $("#search-jobs-button").removeClass("btn-home-disabled");
+                    $("#search-jobs-button").text("Money, to me!");
+                }, 1000);
             })
             // Shows an error message over the button in an bad request error occured.
             .fail(function(jqXHR, textStatus) {
@@ -189,6 +192,8 @@ $(document).ready(function() {
                 }
 
                 $("#search-jobs-button").tooltip('show');
+                $("#search-jobs-button").prop("disabled", false);
+                $("#search-jobs-button").text("Money, to me!");
             });
         }
     })

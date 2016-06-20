@@ -98,7 +98,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
       }
   }
 
-  def filterJob = Action { implicit rs =>
+  /*def filterJob = Action { implicit rs =>
     val form = filterForm.bindFromRequest()
     println(form.toString)
     form.fold(
@@ -111,12 +111,14 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
       }
     )
 
-  }
+}*/
 
   def details(id: Int) = Action {
+    val jobTypes : List[Type] = Types.all
+    val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(id)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]())))
   }
 
   // def apply = Action {
@@ -126,7 +128,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
   def add = Action {
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.add(jobForm,jobTypes, regions))
+    Ok(views.html.add(jobForm, jobTypes, regions))
   }
 
   def createJob = Action(parse.multipartFormData) { implicit request =>
@@ -151,9 +153,11 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
         }
       }
     )
+    val jobTypes : List[Type] = Types.all
+    val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(jobId)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]())))
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]())))
   }
 
   def jobForm:Form[Job] = Form(

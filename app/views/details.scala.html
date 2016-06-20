@@ -1,21 +1,53 @@
-@(job: database.Job, relatedJobs : List[database.Job] )
+@(jobTypes: List[database.Type], regions : List[database.Region], job: database.Job, relatedJobs : List[database.Job])
 
-@main("Play with Scala.js") {
-<h2>Play and Scala.js share a same message</h2>
-<ul>
-    <li>Detail shouts out: <em>@job.name</em></li>
-</ul>
+@main(job.name + " - HolyJobs") {
+    @* Calls the header search-bar. *@
+    @header(regions, jobTypes)
 
-<h2> relatedJob</h2>
-<ul>
-  @if(!relatedJobs.isEmpty){
-    @for(job <- relatedJobs){
-      <li>@job.name</li>
-    }
-  }else{
-    <h3> No related jobs Found</h3>
-  }
-</ul>
+    <div class="page-bottom">
+        <div class="job-details-panel">
+            <div class="job-details-left">
+                <a href="@routes.Assets.at("images/jobs/" + job.img.get)">
+                    <img alt="@job.name" class="job-details-image" src="@routes.Assets.at("images/jobs/" + job.img.get)" />
+                </a>
 
+                @if(!relatedJobs.isEmpty) {
+                    <h3>Related Jobs</h3>
 
+                    <div class="related-jobs">
+                        @for(job <- relatedJobs) {
+                            <li>@job.name</li>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="job-details-right">
+                <h1 class="job-details-name">@job.name</h1>
+
+                <hr class="job-details-separation" />
+
+                <p>
+                    Active from <strong>@job.startDate</strong> to <strong>@job.endDate</strong>
+                </p>
+
+                <div class="job-details">
+                    <p>
+                        <strong>Type:</strong> @job.jobType<br/>
+                        <strong>Region:</strong> @job.region
+                    </p>
+                    <p>
+                        <strong>Description:</strong><br/>
+                        <span>@job.description</span>
+                    </p>
+
+                    <strong>Salary:</strong> @job.hourlyPay per hour<br/>
+                    <strong>Working time:</strong> @job.workingTime
+                </div>
+
+                <hr class="job-details-separation" />
+
+                <a class="btn btn-holyjoby btn-apply">Apply!</a>
+            </div>
+        </div>
+    </div>
 }
