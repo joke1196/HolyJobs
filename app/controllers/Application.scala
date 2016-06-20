@@ -57,7 +57,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     Await.result(db.run(setup), Duration.Inf)
   }
 
-  def ajaxCall = Action { request =>
+  def filterJobAjax = Action { request =>
       var jobType, region = -1;
       var startDate = new java.util.Date();
       var valid = true

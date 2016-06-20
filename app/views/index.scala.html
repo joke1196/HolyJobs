@@ -1,7 +1,7 @@
 @(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region], filterForm : Form[database.FilterJob])
 @import helper._
 @main("HolyJobs") {
-    <input id="ajaxUrl" type="hidden" value="@routes.Application.ajaxCall()" />
+    <input id="ajaxUrl" type="hidden" value="@routes.Application.filterJobAjax()" />
 
     <div class="home-page-top" id="home-page-top">
         <div class="no-result-panel" id="no-result-panel">
@@ -59,8 +59,11 @@
         </div>
     </div>
 
-    <div class="jobs-title">Woohoo, here are the jobs!</div>
-
     <div class="home-page-bottom" id="home-page-bottom">
+        <h1 class="fill-fields-message">
+            Please select values for the <a href="#home-page-top">parameters</a>, then press the
+            <a class="btn btn-holyjoby btn-fill-fields-message">Money, to me!</a>
+            button.
+        </h1>
     </div>
 }

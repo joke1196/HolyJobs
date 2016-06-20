@@ -257,17 +257,35 @@ select::-ms-expand {
     vertical-align: middle;
 }
 
-.jobs-title {
-    font-size: 2em;
-    margin: 1em 0 0 15%;
-}
-
 .home-page-bottom {
     display: table;
     margin-left: 50%;
+    opacity: 1;
     padding: 2em 5em;
+    transition: opacity 300ms;
     transform: translateX(-50%);
     width: 80%;
+}
+
+.home-page-bottom-transparent {
+    opacity: 0;
+}
+
+.fill-fields-message {
+    font-size: 1.87vw;
+}
+
+.btn-fill-fields-message {
+    font-size: 0.8vw;
+    font-weight: bold;
+    padding: 1.5vh 2.5vw;
+}
+
+.jobs-title {
+    display: table-caption;
+    font-size: 1.8vw;
+    font-weight: bold;
+    margin: 6vh 0 0 6%;
 }
 
 .job-row {
