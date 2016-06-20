@@ -129,7 +129,6 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
             import java.io.File
             val filename = file.filename
             jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some(filename))
-            println("ID---------------" + jobId)
             val contentType = file.contentType
             file.ref.moveTo(new File(s"tmp/"+ jobId + file.filename))
           }
