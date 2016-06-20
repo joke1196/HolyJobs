@@ -73,7 +73,13 @@ object Jobs {
   }
 
   def filteredJobs(jobType: Int, region:Int, startDate:Date):List[Job] = {
-    val job = for(j <- Await.result(db.run(jobTable.filter(_.jobType === jobType).filter(_.region === region).filter(_.startDate >= startDate).result), Duration.Inf)) yield j
+    val query = (jobType, region, startDate) match {
+        case (j, r, d) if(j < 0 && r >= 0) => jobTable.filter(_.region === r).filter(_.startDate >= d)
+        case (j, r, d) if( r < 0 && j >= 0) => jobTable.filter(_.jobType === j).filter(_.startDate >= d)
+        case (j, r, d) if(r < 0 && j < 0) => jobTable.filter(_.startDate >= d)
+        case (j, r, d) => jobTable.filter(_.jobType === j).filter(_.region === r).filter(_.startDate >= d)
+    }
+    val job = for(j <- Await.result(db.run(query.result), Duration.Inf)) yield j
     job.toList
   }
 
