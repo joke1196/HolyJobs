@@ -21,6 +21,11 @@ body {
     margin: 0;
 }
 
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 white;
+}
+
 .btn-holyjoby {
     background-color: @holyjobs-color;
     color: white;
@@ -50,9 +55,22 @@ body {
     box-shadow: 0 0 2px black;
 }
 
+.header-fields-table {
+    height: 100%;
+    width: 100%;
+}
+
+.header-fields-table td {
+    height: 100%;
+}
+
 .header-title {
     margin: @home-bottom-spacing 0 @home-bottom-spacing 2vw;
     width: 28vw;
+}
+
+.header-input-group {
+    width: 100%;
 }
 
 .header-bottom {
@@ -61,12 +79,52 @@ body {
 
 .header-search-field-icon {
     background-color: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid @border-color;
+    border-left: 2px solid @border-color;
+    border-radius: 0;
+    border-top: 2px solid @border-color;
     color: white;
-    display: table-cell;
-    font-size: 1.4vw;
     text-align: center;
     vertical-align: middle;
     width: 50px;
+}
+
+.search-fields-header {
+    font-weight: bold;
+    -moz-appearance: none;
+}
+
+.search-select-fields {
+    background-color: rgba(0, 0, 0, 0.4);
+    background-image: url("../images/down-arrow.svg");
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: 2vw;
+    border: 2px solid @border-color;
+    color: white;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    padding: 14px 15px;
+    width: 90%;
+}
+
+.btn-header {
+    .search-fields-header;
+    height: 100%;
+    width: 100%;
+}
+
+.td-btn-header {
+    width: 20%;
+}
+
+.td-header-field {
+    //width: 90%;
+}
+
+.header-search-field {
+    .search-fields-header;
+    .search-select-fields;
 }
 
 .header-job-proposition {
@@ -216,9 +274,7 @@ body {
 
 .search-field-icon {
     .header-search-field-icon;
-    border-bottom: 2px solid @border-color;
-    border-left: 2px solid @border-color;
-    border-top: 2px solid @border-color;
+    display: table-cell;
 }
 
 .search-fields {
@@ -233,17 +289,7 @@ select::-ms-expand {
 
 .search-field {
     .search-fields;
-    background-color: rgba(0, 0, 0, 0.4);
-    background-image: url("../images/down-arrow.svg");
-    background-position: right center;
-    background-repeat: no-repeat;
-    background-size: 2vw;
-    border: 2px solid @border-color;
-    color: white;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    padding: 14px 15px;
-    width: 90%;
+    .search-select-fields;
 }
 
 .search-when {
@@ -397,6 +443,18 @@ select::-ms-expand {
 
 
 // =============================== DETAILS PAGE ================================
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.apply-info-message {
+    margin-bottom: 20px;
+}
+
+.required-fields {
+    font-size: 0.8em;
+}
+
 .job-details-panel {
     margin: 6vh 0 0 50%;
     transform: translateX(-50%);
@@ -472,10 +530,6 @@ select::-ms-expand {
     margin: 0 0 20px;
 }
 
-.job-details-salary {
-    font-size: 1.5em;
-}
-
 .btn-apply {
     font-size: 1.5em;
     font-weight: bold;
@@ -483,8 +537,17 @@ select::-ms-expand {
     width: 100%;
 }
 
-.link-home {
-    float: right;
+.link {
     font-size: 1.3em;
-    margin-top: 80px;
+    margin-top: 30px;
+}
+
+.link-back {
+    .link;
+    float: left;
+}
+
+.link-home {
+    .link;
+    float: right;
 }

@@ -1,6 +1,8 @@
-@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region])
+@(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region], region: Option[String], startDate: Option[String], jobType: Option[String])
 @main("HolyJobs") {
-    <input id="ajaxUrl" type="hidden" value="@routes.Application.filterJobAjax()" />
+    <script src="@routes.Assets.at("javascript/index.js")" type="text/javascript"></script>
+
+    <input id="fieldAlreadyFilled" type="hidden" value="@(!region.isEmpty || !startDate.isEmpty || !jobType.isEmpty)" />
 
     <div class="home-page-top" id="home-page-top">
         <div class="no-result-panel" id="no-result-panel">
@@ -19,32 +21,45 @@
             <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
         </div>
 
-        <img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" />
+        <a href="@routes.Application.index()"><img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" /></a>
 
         <div class="home-bottom" id="home-bottom">
             <div class="home-search">
                 <span class="fa fa-map-marker fa-2x search-field-icon"></span>
                 <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-where" name="region" title="Please select a location.">
-                    <option value="" name="region">Where?</option>
-                    <option value="-1" name="region">Everywhere!</option>
-                    @for(region <- regions){
-                      <option value="@region.regionId" name="region">@region.regionName</option>
+                    <option name="region" value="">Where?</option>
+                    <option name="region" value="-1" @if(!region.isEmpty && region.get.toInt == -1) { selected="selected" }>Everywhere!</option>
+
+                    @for(r <- regions) {
+                        @if(!region.isEmpty && region.get.toInt == r.regionId.get) {
+                            <option name="region" value="@r.regionId.get" selected="selected">@r.regionName</option>
+                        } else {
+                            <option name="region" value="@r.regionId.get">@r.regionName</option>
+                        }
                     }
                 </select>
 
                 <span class="fa fa-calendar fa-2x search-field-icon"></span>
-                <input class="search-field search-when" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-when" name="startDate" placeholder="When?" title="Please select dates." type="date" />
+
+                <input class="search-field search-when" data-placement="top" data-toggle="tooltip"
+                    data-trigger="manual" id="search-when" name="startDate" placeholder="When?"
+                    title="Please select a start date." type="date" @if(!startDate.isEmpty) { value="@startDate.get" } />
 
                 <span class="fa fa-briefcase fa-2x search-field-icon"></span>
                 <select class="search-field" data-placement="top" data-toggle="tooltip" data-trigger="manual" id="search-what" name="jobType" title="Please select a subject.">
-                    <option value="" name="jobType">What?</option>
-                    <option value="-1" name="jobType">Everything!</option>
-                    @for(jobType <- jobTypes){
-                      <option value="@jobType.typeId" name="jobType">@jobType.typeName</option>
+                    <option name="jobType" value="">What?</option>
+                    <option name="jobType" value="-1" @if(!jobType.isEmpty && jobType.get.toInt == -1) { selected="selected" }>Everything!</option>
+
+                    @for(jt <- jobTypes) {
+                        @if(!jobType.isEmpty && jobType.get.toInt == jt.typeId.get) {
+                            <option name="jobType" value="@jt.typeId.get" selected="selected">@jt.typeName</option>
+                        } else {
+                            <option name="jobType" value="@jt.typeId.get">@jt.typeName</option>
+                        }
                     }
                 </select>
 
-                <a class="btn btn-holyjoby btn-home-1" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-jobs-button" title="Search for jobs.">Money, to me!</a>
+                <a class="btn btn-holyjoby btn-home-1" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" data-url="@routes.Application.filterJobAjax()" id="search-jobs-button" title="Search for jobs.">Money, to me!</a>
             </div>
             <div class="home-proposition">
                 <span class="job-proposition-label">You already have money to take care of your mummy and are here to <strong>propose a job</strong> for holidays?</span>

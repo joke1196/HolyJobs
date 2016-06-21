@@ -34,17 +34,27 @@ import play.api.i18n.MessagesApi
 
 import play.api.libs.json._
 import java.util.Date
+import play.api.libs.mailer._
+import java.io.File
 
 
 
-class Application @Inject() (val messagesApi :MessagesApi)extends Controller with I18nSupport {
+class Application @Inject() (mailerClient: MailerClient, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   private val db = Database.forConfig("h2mem1")
 
   def index = Action { implicit rs =>
+    // Tries to get the URL parameters in order to restore a previous research
+    // or to perform a research from the search-header of another page, which
+    // posts these parameters on this page.
+    val region = rs.queryString.get("region").flatMap(_.headOption)
+    val startDate = rs.queryString.get("startDate").flatMap(_.headOption)
+    val jobType = rs.queryString.get("jobType").flatMap(_.headOption)
+
     val resultingJobs: List[Job] = Jobs.all
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.index(resultingJobs, jobTypes, regions))
+
+    Ok(views.html.index(resultingJobs, jobTypes, regions, region, startDate, jobType))
   }
 
   private def createDB() = {
@@ -98,40 +108,22 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
       }
   }
 
-  /*def filterJob = Action { implicit rs =>
-    val form = filterForm.bindFromRequest()
-    println(form.toString)
-    form.fold(
-      formWithErrors => {
-        BadRequest(views.html.index(Jobs.all, Types.all,Regions.all, filterForm))
-      },
-      job => {
-        val jobList = Jobs.filteredJobs(job.jobType, job.region, job.startDate)
-        Ok(views.html.index(jobList, Types.all, Regions.all, filterForm))
-      }
-    )
-
-}*/
-
-  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)= {
+  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String) = {
     val jobTypeName: String = Types.typeName(jobTypeId).get.typeName
     val regionName : String = Regions.regionName(regionId).get.regionName
     (regionName, jobTypeName)
   }
 
-  def details(id: Int) = Action {
+  def details(id: Int) = Action { request =>
+    val result = request.queryString.get("result").flatMap(_.headOption)
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(id)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
     val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
 
-    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
+    Ok(views.html.details(result, jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
-
-  // def apply = Action {
-  //   Ok(views.html.details("Okay"))
-  // }
 
   def add = Action {
     val jobTypes : List[Type] = Types.all
@@ -139,35 +131,181 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
     Ok(views.html.add(jobForm, jobTypes, regions))
   }
 
-  def createJob = Action(parse.multipartFormData) { implicit request =>
-    val form = jobForm.bindFromRequest()
-    var jobId = 0
-    println(form.toString)
-    form.fold(
-      formWithErrors => {
-        BadRequest(views.html.add(formWithErrors, Types.all,Regions.all))
-      },
-      job => {
-        request.body.file("img") match {
-          case Some(file) => {
-            import java.io.File
-            val filename = file.filename
-            jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some(filename))
-            val contentType = file.contentType
-            file.ref.moveTo(new File(s"tmp/"+ jobId + file.filename))
-          }
-          case _ => jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("/tmp/noImg.jpeg"))
-        }
-      }
-    )
-    val jobTypes : List[Type] = Types.all
-    val regions : List[Region] = Regions.all
-    val jobDetails: Option[Job] = Jobs.byID(jobId)
-    val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
-    val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+  def apply(id: Int) = Action(parse.multipartFormData) { request =>
+      val emailPattern = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)""".r
+      val jobDetails = Jobs.byID(id).get
+      // Gets the form's parameters.
+      val firstName = request.body.asFormUrlEncoded.get("firstName").map(_.head);
+      val lastName = request.body.asFormUrlEncoded.get("lastName").map(_.head);
+      val emailAddress = request.body.asFormUrlEncoded.get("email").map(_.head);
+      val age = request.body.asFormUrlEncoded.get("age").map(_.head);
+      val comments = request.body.asFormUrlEncoded.get("comments").map(_.head);
+      val file = request.body.file("file");
+      // Indicates the result of the fields validation.
+      var result = "ok";
 
-    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
+      // Validates mandatory fields.
+      if (firstName.get.isEmpty || lastName.get.isEmpty || emailAddress.get.isEmpty || age.get.isEmpty) {
+          result = "fieldEmpty"
+      // Validates email field.
+      } else if (!emailAddress.get.matches(emailPattern.toString)) {
+         result = "badEmailFormat"
+      // Validates age as a number field.
+      } else if (!age.get.forall(_.isDigit)) {
+         result = "ageNaN"
+      // Validates the uploaded file, if there is one.
+      } else if (!file.get.filename.isEmpty) {
+          // The file must be a PDF.
+          if (file.get.contentType.isEmpty || file.get.contentType.get != "application/pdf") {
+              result = "invalidFile"
+          // The file cannot be larger than 5MB.
+          } else if (file.get.ref.file.length / 1024 >= 5000) {
+              result = "fileTooLarge"
+          }
+      // Sends the email if every field is valid.
+      } else {
+          val title = "HolyJobs - New application for a job!"
+          val from = "HolyJobs <noreply@email.com>"
+          val to = Seq("<" + jobDetails.email + ">")
+          val html = Some(s"""
+              <html>
+                  <body>
+                      <p>
+                          Hello,
+                      </p>
+                      <p>
+                          You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
+                          <table cellpadding=10>
+                              <tr>
+                                  <td></td>
+                                  <td>First Name: </td>
+                                  <td>""" + firstName.get + """</td>
+                              </tr>
+                              <tr>
+                                  <td></td>
+                                  <td>Last Name: </td>
+                                  <td>""" + lastName.get + """</td>
+                              </tr>
+                              <tr>
+                                  <td></td>
+                                  <td>Email Address: </td>
+                                  <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
+                              </tr>
+                              <tr>
+                                  <td></td>
+                                  <td>Age: </td>
+                                  <td>""" + age.get + """</td>
+                              </tr>
+                              <tr>
+                                  <td></td>
+                                  <td>Comments: </td>
+                                  <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
+                              </tr>
+                          </table><br/>
+                      </p>
+                      <p>
+                          We're looking forward to seeing you again on HolyJobs,<br/>
+                          The <a href="http://localhost:9000/">HolyJobs</a> Team
+                      </p>
+                  </body>
+              </html>"""
+          )
+
+          val email = Email(
+            "HolyJobs - New application for a job!",
+            "HolyJobs <noreply@email.com>",
+            Seq("<" + jobDetails.email + ">"),
+            // adds attachment
+            //attachments = Seq(AttachmentFile("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))),
+            bodyHtml = Some(s"""
+                <html>
+                    <body>
+                        <p>
+                            Hello,
+                        </p>
+                        <p>
+                            You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
+                            <table cellpadding=10>
+                                <tr>
+                                    <td></td>
+                                    <td>First Name: </td>
+                                    <td>""" + firstName.get + """</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Last Name: </td>
+                                    <td>""" + lastName.get + """</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Email Address: </td>
+                                    <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Age: </td>
+                                    <td>""" + age.get + """</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Comments: </td>
+                                    <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
+                                </tr>
+                            </table><br/>
+                        </p>
+                        <p>
+                            We're looking forward to seeing you again on HolyJobs,<br/>
+                            The <a href="http://localhost:9000/">HolyJobs</a> Team
+                        </p>
+                    </body>
+                </html>""")
+          )
+
+          // Adds an attachment if the user set a file.
+          /*if (!file.get.filename.isEmpty) {
+              email.addAttachment("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))
+          }*/
+
+          mailerClient.send(email)
+      }
+
+      // Redirects the user on the product page when the process ends.
+      Redirect("/details/" + id + "?result=" + result)
   }
+
+    def createJob = Action(parse.multipartFormData) { implicit request =>
+      val form = jobForm.bindFromRequest()
+      var jobId = 0
+      println(form.toString)
+      form.fold(
+        formWithErrors => {
+          BadRequest(views.html.add(formWithErrors, Types.all,Regions.all))
+        },
+        job => {
+          request.body.file("img") match {
+            case Some(file) => {
+              val filename = file.filename
+
+              if (filename.isEmpty) {
+                  jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("default.jpg"))
+              } else {
+                  jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some(filename))
+                  val contentType = file.contentType
+                  file.ref.moveTo(new File(s"public/images/jobs/" + jobId + "-" + file.filename))
+              }
+            }
+            case _ => jobId = Jobs.insert(job.name, job.description, job.startDate, job.endDate, job.jobType, job.region, job.hourlyPay, job.workingTime, job.email, Some("default.jpg"))
+          }
+        }
+      )
+      val jobTypes : List[Type] = Types.all
+      val regions : List[Region] = Regions.all
+      val jobDetails: Option[Job] = Jobs.byID(jobId)
+      val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
+      val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
+
+      Ok(views.html.details(None, jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
+    }
 
   def jobForm:Form[Job] = Form(
     mapping(

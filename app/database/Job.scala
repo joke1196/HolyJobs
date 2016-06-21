@@ -54,8 +54,15 @@ object Jobs {
   */
   def updateImgPath(id:Int, img:String)={
     val imgPath = for{j <- jobTable if j.id === id} yield j.img
-    val updateAction = imgPath.update("/tmp/"+ id +img)
-    Await.result(db.run(updateAction) ,Duration.Inf)
+    var updateAction = ""
+
+    if (img == "default.jpg") {
+        Await.result(db.run(imgPath.update(img)), Duration.Inf)
+    } else {
+        Await.result(db.run(imgPath.update(id + "-" + img)), Duration.Inf)
+    }
+
+
   }
 
   // Returns all the job in the database
@@ -77,7 +84,7 @@ object Jobs {
       else Some(job.take(5).toList)
   }
 
-  
+
   /* Returns all the jobs filtered by its type,region and date.
   *  For the date, a job is returnes if the date provided is inbetween its start and end date
   */

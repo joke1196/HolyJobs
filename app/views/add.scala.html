@@ -30,29 +30,41 @@
     @* Calls the header search-bar. *@
     @header(regions, jobTypes)
 
-    @helper.form(action = routes.Application.createJob, 'enctype -> "multipart/form-data"){
-      @inputText(jobForm("name"))
-      @textarea(jobForm("description") )
-      @inputDate(jobForm("startDate"))
-      @inputText(jobForm("endDate"))
-      @select(jobForm("jobType"),
-        options = jobTypes.map(
-        t => t.typeId.get.toString -> t.typeName
-        ).toSeq,
-         '_showConstraints -> false
-      )
-      @select(jobForm("region"),
-      options = regions.map(
-      r  => r.regionId.get.toString -> r.regionName
-      ).toSeq,
-        '_showConstraints -> false
-      )
-      @inputText(jobForm("hourlyPay"), '_showConstraints -> false)
-      @inputText(jobForm("workingTime"))
-      @inputText(jobForm("email"), '_showConstraints -> false)
+    <div class="page-bottom">
+        <div class="job-details-panel">
+            <h1>Add a job</h1>
 
-      <input type="file" name="img"></input>
+            @helper.form(action = routes.Application.createJob, 'enctype -> "multipart/form-data") {
+                <div class="form-group">
+                    @helper.input(jobForm("name")) { (id, name, value, args) =>
+                        <label for="@id">Name</label>
+                        <input class="form-control" id="@id" name="@name" placeholder="name" type="text" />
+                    }
+                </div>
 
-      <input type="submit" value="Submit">
-    }
+                @textarea(jobForm("description") )
+                @inputDate(jobForm("startDate"))
+                @inputText(jobForm("endDate"))
+                @select(jobForm("jobType"),
+                options = jobTypes.map(
+                t => t.typeId.get.toString -> t.typeName
+                ).toSeq,
+                 '_showConstraints -> false
+                )
+                @select(jobForm("region"),
+                options = regions.map(
+                r  => r.regionId.get.toString -> r.regionName
+                ).toSeq,
+                '_showConstraints -> false
+                )
+                @inputText(jobForm("hourlyPay"), '_showConstraints -> false)
+                @inputText(jobForm("workingTime"))
+                @inputText(jobForm("email"), '_showConstraints -> false)
+
+                <input type="file" name="img"></input>
+
+                <input type="submit" value="Submit">
+            }
+        </div>
+    </div>
 }
