@@ -1,6 +1,7 @@
 @holyjobs-color: #1b4468;
 @border-color: #484848;
 @home-bottom-spacing: 3.8vh;
+@page-bottom-padding: 5vh 3.8vw;
 @job-element-font-size: 1vw;
 @job-element-padding: 5%;
 
@@ -108,6 +109,10 @@ body {
 .header-error .panel-heading {
     font-size: 0.8vw;
     text-align: center;
+}
+
+.page-bottom {
+    padding: @page-bottom-padding;
 }
 
 
@@ -271,6 +276,12 @@ select::-ms-expand {
     .search-fields;
 }
 
+.btn-home-disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
 .home-proposition {
     display: table;
     margin-top: @home-bottom-spacing;
@@ -287,7 +298,7 @@ select::-ms-expand {
     display: table;
     margin-left: 50%;
     opacity: 1;
-    padding: 2em 5em;
+    padding: @page-bottom-padding;
     transition: opacity 300ms;
     transform: translateX(-50%);
     width: 80%;
@@ -374,6 +385,106 @@ select::-ms-expand {
 
 .job-element-details {
     font-size: 0.8vw;
-    margin-top: 40%;
+    margin-top: 45%;
     transform: translateY(-50%);
+}
+
+.job-element-price {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+
+
+// =============================== DETAILS PAGE ================================
+.job-details-panel {
+    margin: 6vh 0 0 50%;
+    transform: translateX(-50%);
+    width: 900px;
+}
+
+.job-details-subpanel {
+    margin-bottom: 10vh;
+    padding: 0 2.5vw;
+    width: 50%;
+}
+
+.job-details-left {
+    .job-details-subpanel;
+    float: left;
+}
+
+.job-details-image {
+    border: 1px solid black;
+    margin-bottom: 2vh;
+    width: 100%;
+}
+
+.related-jobs {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.related-job {
+    border: 1px solid #bbb;
+    margin: 0 1% 1vh 0;
+    max-width: 32%;
+    position: relative;
+}
+
+.related-job-picture {
+    max-width: 100%;
+}
+
+.related-job-title {
+    background-color: rgba(255, 255, 255, 0.9);
+    bottom: 0;
+    left: 0;
+    max-height: 100%;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.job-details-right {
+    .job-details-subpanel;
+    float: right;
+}
+
+.job-details-name {
+    font-weight: bold;
+    margin: 0 0 20px 0;
+}
+
+.job-details-separation {
+    border-color: #ddd;
+}
+
+.job-details {
+    background-color: #eee;
+    font-size: 1.2em;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.job-details p {
+    margin: 0 0 20px;
+}
+
+.job-details-salary {
+    font-size: 1.5em;
+}
+
+.btn-apply {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.link-home {
+    float: right;
+    font-size: 1.3em;
+    margin-top: 80px;
 }

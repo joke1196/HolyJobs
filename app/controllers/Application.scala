@@ -97,17 +97,36 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           BadRequest("errorField");
       }
   }
-  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)={
+
+  /*def filterJob = Action { implicit rs =>
+    val form = filterForm.bindFromRequest()
+    println(form.toString)
+    form.fold(
+      formWithErrors => {
+        BadRequest(views.html.index(Jobs.all, Types.all,Regions.all, filterForm))
+      },
+      job => {
+        val jobList = Jobs.filteredJobs(job.jobType, job.region, job.startDate)
+        Ok(views.html.index(jobList, Types.all, Regions.all, filterForm))
+      }
+    )
+
+}*/
+
+  def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)= {
     val jobTypeName: String = Types.typeName(jobTypeId).get.typeName
     val regionName : String = Regions.regionName(regionId).get.regionName
     (regionName, jobTypeName)
   }
 
   def details(id: Int) = Action {
+    val jobTypes : List[Type] = Types.all
+    val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(id)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, id)
     val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
+
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   // def apply = Action {
@@ -117,7 +136,7 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
   def add = Action {
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.add(jobForm,jobTypes, regions))
+    Ok(views.html.add(jobForm, jobTypes, regions))
   }
 
   def createJob = Action(parse.multipartFormData) { implicit request =>
@@ -141,10 +160,13 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
         }
       }
     )
+    val jobTypes : List[Type] = Types.all
+    val regions : List[Region] = Regions.all
     val jobDetails: Option[Job] = Jobs.byID(jobId)
     val relatedJob:  Option[List[Job]] = Jobs.relatedJob(jobDetails.get.jobType, jobId)
     val regionAndType = getRegionAndTypeName(jobDetails.get.region, jobDetails.get.jobType)
-    Ok(views.html.details(jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
+
+    Ok(views.html.details(jobTypes, regions, jobDetails.get, relatedJob.getOrElse(List[Job]()), regionAndType._1, regionAndType._2))
   }
 
   def jobForm:Form[Job] = Form(
@@ -162,6 +184,4 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
      "id" -> optional(number)
    )(Job.apply)(Job.unapply)
   )
-
-
 }
