@@ -192,7 +192,7 @@ $(document).ready(function() {
                 }
 
                 $("#search-jobs-button").tooltip('show');
-                $("#search-jobs-button").prop("disabled", false);
+                $("#home-page-bottom").removeClass("home-page-bottom-transparent");
                 $("#search-jobs-button").text("Money, to me!");
             });
         }

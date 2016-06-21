@@ -8,30 +8,51 @@
             </td>
             <td>
                 <div class="header-bottom">
-                    <div class="home-search">
-                        <span class="fa fa-map-marker fa-2x header-search-field-icon"></span>
-                        <select class="search-field" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-where" name="region" title="Please select a location.">
-                            <option value="" name="region">Where?</option>
-                            <option value="-1" name="region">Everywhere!</option>
-                            @for(region <- regions){
-                              <option value="@region.regionId" name="region">@region.regionName</option>
-                            }
-                        </select>
-
-                        <span class="fa fa-calendar fa-2x header-search-field-icon"></span>
-                        <input class="search-field search-when" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-when" name="startDate" placeholder="When?" title="Please select dates." type="date" />
-
-                        <span class="fa fa-briefcase fa-2x header-search-field-icon"></span>
-                        <select class="search-field" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-what" name="jobType" title="Please select a subject.">
-                            <option value="" name="jobType">What?</option>
-                            <option value="-1" name="jobType">Everything!</option>
-                            @for(jobType <- jobTypes){
-                              <option value="@jobType.typeId" name="jobType">@jobType.typeName</option>
-                            }
-                        </select>
-
-                        <a class="btn btn-holyjoby btn-home-1" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-jobs-button" title="Search for jobs.">Money, to me!</a>
-                    </div>
+                    <form>
+                        <table class="header-fields-table">
+                            <tr>
+                                <td class="td-header-field">
+                                    <div class="input-group header-input-group">
+                                        <span class="input-group-addon header-search-field-icon">
+                                            <span class="fa fa-map-marker fa-2x"></span>
+                                        </span>
+                                        <select class="header-search-field">
+                                            <option value="" name="region">Where?</option>
+                                            <option value="-1" name="region">Everywhere!</option>
+                                            @for(region <- regions){
+                                              <option value="@region.regionId" name="region">@region.regionName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td class="td-header-field">
+                                    <div class="input-group header-input-group">
+                                        <span class="input-group-addon header-search-field-icon">
+                                            <span class="fa fa-calendar fa-2x"></span>
+                                        </span>
+                                        <input class="header-search-field search-when" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-when" name="startDate" placeholder="When?" title="Please select dates." type="date" />
+                                    </div>
+                                </td>
+                                <td class="td-header-field">
+                                    <div class="input-group header-input-group">
+                                        <span class="input-group-addon header-search-field-icon">
+                                            <span class="fa fa-briefcase fa-2x"></span>
+                                        </span>
+                                        <select class="header-search-field" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-what" name="jobType" title="Please select a subject.">
+                                            <option value="" name="jobType">What?</option>
+                                            <option value="-1" name="jobType">Everything!</option>
+                                            @for(jobType <- jobTypes){
+                                              <option value="@jobType.typeId" name="jobType">@jobType.typeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td class="td-btn-header">
+                                    <input class="btn btn-holyjoby btn-header" data-placement="bottom" data-toggle="tooltip" data-trigger="manual" id="search-jobs-button" title="Search for jobs." type="submit" value="Money, to me!" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
 
                     <table class="header-job-proposition">
                         <tr>
