@@ -443,6 +443,18 @@ select::-ms-expand {
 
 
 // =============================== DETAILS PAGE ================================
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.apply-info-message {
+    margin-bottom: 20px;
+}
+
+.required-fields {
+    font-size: 0.8em;
+}
+
 .job-details-panel {
     margin: 6vh 0 0 50%;
     transform: translateX(-50%);
@@ -518,10 +530,6 @@ select::-ms-expand {
     margin: 0 0 20px;
 }
 
-.job-details-salary {
-    font-size: 1.5em;
-}
-
 .btn-apply {
     font-size: 1.5em;
     font-weight: bold;
@@ -529,8 +537,17 @@ select::-ms-expand {
     width: 100%;
 }
 
-.link-home {
-    float: right;
+.link {
     font-size: 1.3em;
-    margin-top: 80px;
+    margin-top: 30px;
+}
+
+.link-back {
+    .link;
+    float: left;
+}
+
+.link-home {
+    .link;
+    float: right;
 }

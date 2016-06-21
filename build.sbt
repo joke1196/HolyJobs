@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-nop" % "latest.release",
   "mysql" % "mysql-connector-java" % "latest.release",
   "org.webjars" % "jquery" % "latest.release",
-  "com.typesafe.slick" %% "slick" % "latest.release"
+  "com.typesafe.slick" %% "slick" % "latest.release",
+  "com.typesafe.play" %% "play-mailer" % "latest.release"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"

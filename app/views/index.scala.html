@@ -1,5 +1,7 @@
 @(jobs: List[database.Job], jobTypes: List[database.Type], regions : List[database.Region], region: Option[String], startDate: Option[String], jobType: Option[String])
 @main("HolyJobs") {
+    <script src="@routes.Assets.at("javascript/index.js")" type="text/javascript"></script>
+
     <input id="fieldAlreadyFilled" type="hidden" value="@(!region.isEmpty || !startDate.isEmpty || !jobType.isEmpty)" />
 
     <div class="home-page-top" id="home-page-top">
@@ -19,7 +21,7 @@
             <span class="home-slogan">Stop praying for money, take care of your mummy, start working buddy!</span>
         </div>
 
-        <img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" />
+        <a href="@routes.Application.index()"><img class="home-title-bottom" id="home-title-bottom" src="@routes.Assets.at("images/title.png")" /></a>
 
         <div class="home-bottom" id="home-bottom">
             <div class="home-search">

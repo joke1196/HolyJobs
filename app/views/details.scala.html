@@ -1,8 +1,78 @@
-@(jobTypes: List[database.Type], regions : List[database.Region], job: database.Job, relatedJobs : List[database.Job], regionName:String, typeName:String)
+@(result: Option[String], jobTypes: List[database.Type], regions : List[database.Region], job: database.Job, relatedJobs : List[database.Job], regionName:String, typeName:String)
 
 @main(job.name + " - HolyJobs") {
     @* Calls the header search-bar. *@
     @header(regions, jobTypes)
+
+    <script src="@routes.Assets.at("javascript/details.js")" type="text/javascript"></script>
+
+    <div id="dialog-apply" title="Apply for '@job.name'" style="border: 1px solid black;">
+        <form action="@routes.Application.apply(job.id.get)" enctype="multipart/form-data" id="form-apply" method="post">
+            <div class="apply-info-message">
+                This form will send an email to the person in charge.
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">* Coordinates</label>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <input class="form-control" id="firstName" name="firstName" placeholder="First Name" required="required" type="text">
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" id="lastName" name="lastName" placeholder="Last Name" required="required" type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <input class="form-control" id="email" name="email" placeholder="Email Address" required="required" type="email">
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" id="age" name="age" min="0" placeholder="Age" required="required" type="number">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Comments</label>
+                <textarea class="form-control" id="comments" name="comments" placeholder="Write a comment here..." rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="file">File input</label>
+                <input id="file" name="file" type="file" />
+                <p class="help-block">You can send your CV or other <u>PDF</u> files here (maximum size of <strong>5MB</strong>).</p>
+            </div>
+
+            <span class="required-fields">* Required fields</span>
+
+            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            <input id="btn-submit-apply" name="submit" style="position:absolute; top:-1000px" tabindex="-1" type="submit">
+        </form>
+    </div>
+
+    @if(!result.isEmpty) {
+        @if(result.get == "ok") {
+            <div class="alert alert-success job-details-panel">
+                <span class="fa fa-check" aria-hidden="true"></span>
+                Your application for this job was successfully sent.
+            </div>
+        } else {
+            <div class="alert alert-danger job-details-panel">
+                <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                @{result.get match {
+                    case "fieldEmpty"       => "Please fill all mandatory fields."
+                    case "badEmailFormat"   => "The email address you entered is not valid."
+                    case "ageNaN"           => "The age you entered is not valid."
+                    case "invalidFile"      => "You can only send a PDF file."
+                    case "fileTooLarge"     => "The file you selected is too large (maximum size of 5MB)."
+                    case _                  => "An error occured, please retry in a while."
+                }}
+            </div>
+        }
+    }
 
     <div class="page-bottom">
         <div class="job-details-panel">
@@ -48,14 +118,15 @@
                         <span>@job.description</span>
                     </p>
 
-                    <strong>Salary:</strong> <span class="job-details-salary">CHF @job.hourlyPay</span> per hour<br/>
+                    <strong>Salary:</strong> CHF @job.hourlyPay per hour<br/>
                     <strong>Working time:</strong> @job.workingTime hours per week
                 </div>
 
                 <hr class="job-details-separation" />
 
-                <a class="btn btn-holyjoby btn-apply">Apply!</a>
+                <a class="btn btn-holyjoby btn-apply" id="btn-apply">Apply!</a>
 
+                <a class="link-back" href="javascript:history.back()">Back</a>
                 <a class="link-home" href="@routes.Application.index()">Home</a>
             </div>
         </div>
