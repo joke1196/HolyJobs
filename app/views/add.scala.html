@@ -1,69 +1,83 @@
 @(jobForm:Form[database.Job], jobTypes: List[database.Type], regions : List[database.Region])(implicit messages :Messages)
 @import helper._
 @main("Add a job - HolyJobs") {
-    <script>
-        $(document).ready(function() {
-            // Occurs when the user clicked on the "Money, to me!" button.
-            $("#search-jobs-button").click(function() {
-                var whereValue = $("#search-where").val();
-                var whenValue = $("#search-when").val();
-                var whatValue = $("#search-what").val();
-
-                $("#search-jobs-button").tooltip('hide');
-
-                if (!whereValue) {
-                    $("#header-error-content").text($("#search-where").attr("title"));
-                    $("#header-error").addClass("header-error-visible");
-                } else if (!whenValue) {
-                    $("#header-error-content").text($("#search-when").attr("title"));
-                    $("#header-error").addClass("header-error-visible");
-                } else if (!whatValue) {
-                    $("#header-error-content").text($("#search-what").attr("title"));
-                    $("#header-error").addClass("header-error-visible");
-                } else {
-                    $("#header-error").removeClass("header-error-visible");
-                }
-            })
-        })
-    </script>
+    <script src="@routes.Assets.at("javascript/add.js")" type="text/javascript"></script>
 
     @* Calls the header search-bar. *@
     @header(regions, jobTypes)
 
     <div class="page-bottom">
-        <div class="job-details-panel">
-            <h1>Add a job</h1>
-
+        <div class="job-add-panel">
             @helper.form(action = routes.Application.createJob, 'enctype -> "multipart/form-data") {
-                <div class="form-group">
-                    @helper.input(jobForm("name")) { (id, name, value, args) =>
-                        <label for="@id">Name</label>
-                        <input class="form-control" id="@id" name="@name" placeholder="name" type="text" />
-                    }
+                <div class="form-add">
+                    <h1><span class="fa fa-briefcase add-job-icon"></span> Add a job</h1>
+
+                    <hr class="job-details-separation" />
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input class="form-control" id="name" name="name" placeholder="Name" required="required" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" placeholder="Write a description here..." required="required" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input class="form-control" id="startDate" name="startDate" placeholder="YYYY-MM-DD" required="required" type="date" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input class="form-control" id="endDate" name="endDate" placeholder="YYYY-MM-DD" required="required" type="date" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobType">Type of Job</label>
+                        <select class="form-control" id="jobType" name="jobType">
+                            @for(jobType <- jobTypes){
+                              <option value="@jobType.typeId">@jobType.typeName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <select class="form-control" id="region" name="region">
+                            @for(region <- regions){
+                              <option value="@region.regionId">@region.regionName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hourlyPay">Hourly Pay (CHF)</label>
+                        <input class="form-control" id="hourlyPay" min="0" name="hourlyPay" placeholder="12,00" required="required" step="0.05" type="number" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="workingTime">Hours per Week</label>
+                        <input class="form-control" id="workingTime" max="100" min="0" name="workingTime" placeholder="42" required="required" step="0.5" type="number" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Your Email Address</label>
+                        <input class="form-control" id="email" name="email" placeholder="jean-michel&#64;gmail.com" required="required" type="email" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="file">File input</label>
+                        <input id="file" name="file" type="file" />
+                        <p class="help-block">Only images (maximum size of <strong>5MB</strong>).</p>
+                    </div>
+
+                    <hr class="job-details-separation" />
+
+                    <a class="btn btn-holyjoby btn-cancel" href="@routes.Application.index()">Cancel</a>
+                    <input class="btn btn-holyjoby btn-add" type="submit" value="Create!">
                 </div>
-
-                @textarea(jobForm("description") )
-                @inputDate(jobForm("startDate"))
-                @inputText(jobForm("endDate"))
-                @select(jobForm("jobType"),
-                options = jobTypes.map(
-                t => t.typeId.get.toString -> t.typeName
-                ).toSeq,
-                 '_showConstraints -> false
-                )
-                @select(jobForm("region"),
-                options = regions.map(
-                r  => r.regionId.get.toString -> r.regionName
-                ).toSeq,
-                '_showConstraints -> false
-                )
-                @inputText(jobForm("hourlyPay"), '_showConstraints -> false)
-                @inputText(jobForm("workingTime"))
-                @inputText(jobForm("email"), '_showConstraints -> false)
-
-                <input type="file" name="img"></input>
-
-                <input type="submit" value="Submit">
             }
         </div>
     </div>

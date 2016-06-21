@@ -21,7 +21,7 @@ body {
     margin: 0;
 }
 
-select:-moz-focusring {
+.header-search-field:-moz-focusring, .search-field:-moz-focusring {
     color: transparent;
     text-shadow: 0 0 0 white;
 }
@@ -455,10 +455,15 @@ select::-ms-expand {
     font-size: 0.8em;
 }
 
-.job-details-panel {
-    margin: 6vh 0 0 50%;
+.job-panels {
+    margin-left: 50%;
     transform: translateX(-50%);
     width: 900px;
+}
+
+.job-details-panel {
+    .job-panels;
+    margin-top: 6vh;
 }
 
 .job-details-subpanel {
@@ -550,4 +555,31 @@ select::-ms-expand {
 .link-home {
     .link;
     float: right;
+}
+
+
+
+// ================================= ADD PAGE ==================================
+.job-add-panel {
+    .job-panels;
+}
+
+.form-add {
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    padding: 10px 30px 65px;
+}
+
+.add-job-icon {
+    margin-right: 10px;
+}
+
+.btn-cancel {
+    float: left;
+    width: 200px;
+}
+
+.btn-add {
+    float: right;
+    width: 200px;
 }

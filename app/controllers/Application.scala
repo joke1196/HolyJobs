@@ -141,8 +141,9 @@ class Application @Inject() (mailerClient: MailerClient, val messagesApi: Messag
       val age = request.body.asFormUrlEncoded.get("age").map(_.head);
       val comments = request.body.asFormUrlEncoded.get("comments").map(_.head);
       val file = request.body.file("file");
+      val validResult = "ok"
       // Indicates the result of the fields validation.
-      var result = "ok";
+      var result = validResult;
 
       // Validates mandatory fields.
       if (firstName.get.isEmpty || lastName.get.isEmpty || emailAddress.get.isEmpty || age.get.isEmpty) {
@@ -162,111 +163,117 @@ class Application @Inject() (mailerClient: MailerClient, val messagesApi: Messag
           } else if (file.get.ref.file.length / 1024 >= 5000) {
               result = "fileTooLarge"
           }
+      }
+
       // Sends the email if every field is valid.
-      } else {
-          val title = "HolyJobs - New application for a job!"
-          val from = "HolyJobs <noreply@email.com>"
-          val to = Seq("<" + jobDetails.email + ">")
-          val html = Some(s"""
-              <html>
-                  <body>
-                      <p>
-                          Hello,
-                      </p>
-                      <p>
-                          You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
-                          <table cellpadding=10>
-                              <tr>
-                                  <td></td>
-                                  <td>First Name: </td>
-                                  <td>""" + firstName.get + """</td>
-                              </tr>
-                              <tr>
-                                  <td></td>
-                                  <td>Last Name: </td>
-                                  <td>""" + lastName.get + """</td>
-                              </tr>
-                              <tr>
-                                  <td></td>
-                                  <td>Email Address: </td>
-                                  <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
-                              </tr>
-                              <tr>
-                                  <td></td>
-                                  <td>Age: </td>
-                                  <td>""" + age.get + """</td>
-                              </tr>
-                              <tr>
-                                  <td></td>
-                                  <td>Comments: </td>
-                                  <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
-                              </tr>
-                          </table><br/>
-                      </p>
-                      <p>
-                          We're looking forward to seeing you again on HolyJobs,<br/>
-                          The <a href="http://localhost:9000/">HolyJobs</a> Team
-                      </p>
-                  </body>
-              </html>"""
-          )
+      if (result == validResult) {
+          if (file.get.filename.isEmpty) {
+              val email = Email(
+                "HolyJobs - New application for a job!",
+                "HolyJobs <jj@email.com>",
+                Seq("<" + jobDetails.email + ">"),
+                // adds attachment
+                //attachments = Seq(AttachmentFile("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))),
+                bodyHtml = Some(s"""
+                    <html>
+                        <body>
+                            <p>
+                                Hello,
+                            </p>
+                            <p>
+                                You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
+                                <table cellpadding=10>
+                                    <tr>
+                                        <td></td>
+                                        <td>First Name: </td>
+                                        <td>""" + firstName.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Last Name: </td>
+                                        <td>""" + lastName.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Email Address: </td>
+                                        <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Age: </td>
+                                        <td>""" + age.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Comments: </td>
+                                        <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
+                                    </tr>
+                                </table><br/>
+                            </p>
+                            <p>
+                                We're looking forward to seeing you again on HolyJobs,<br/>
+                                The <a href="http://localhost:9000/">HolyJobs</a> Team
+                            </p>
+                        </body>
+                    </html>""")
+              )
 
-          val email = Email(
-            "HolyJobs - New application for a job!",
-            "HolyJobs <noreply@email.com>",
-            Seq("<" + jobDetails.email + ">"),
-            // adds attachment
-            //attachments = Seq(AttachmentFile("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))),
-            bodyHtml = Some(s"""
-                <html>
-                    <body>
-                        <p>
-                            Hello,
-                        </p>
-                        <p>
-                            You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
-                            <table cellpadding=10>
-                                <tr>
-                                    <td></td>
-                                    <td>First Name: </td>
-                                    <td>""" + firstName.get + """</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Last Name: </td>
-                                    <td>""" + lastName.get + """</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Email Address: </td>
-                                    <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Age: </td>
-                                    <td>""" + age.get + """</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Comments: </td>
-                                    <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
-                                </tr>
-                            </table><br/>
-                        </p>
-                        <p>
-                            We're looking forward to seeing you again on HolyJobs,<br/>
-                            The <a href="http://localhost:9000/">HolyJobs</a> Team
-                        </p>
-                    </body>
-                </html>""")
-          )
+              mailerClient.send(email)
+          } else {
+             val email = Email(
+                "HolyJobs - New application for a job!",
+                "HolyJobs <jj@email.com>",
+                Seq("<" + jobDetails.email + ">"),
+                // adds attachment
+                attachments = Seq(AttachmentFile("Attachment.pdf", new File(file.get.ref.file.getAbsolutePath()))),
+                bodyHtml = Some(s"""
+                    <html>
+                        <body>
+                            <p>
+                                Hello,
+                            </p>
+                            <p>
+                                You received a new application for your job '<strong>""" + jobDetails.name + """</strong>':
+                                <table cellpadding=10>
+                                    <tr>
+                                        <td></td>
+                                        <td>First Name: </td>
+                                        <td>""" + firstName.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Last Name: </td>
+                                        <td>""" + lastName.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Email Address: </td>
+                                        <td><a href="mailto:""" + emailAddress.get + """">""" + emailAddress.get + """</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Age: </td>
+                                        <td>""" + age.get + """</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Comments: </td>
+                                        <td>""" + (if (comments.get.isEmpty) "-" else comments.get) + """</td>
+                                    </tr>
+                                </table><br/>
+                                Don't forget to have a look at the attached PDF file!
+                            </p>
+                            <br/>
+                            <p>
+                                We're looking forward to seeing you again on HolyJobs,<br/>
+                                The <a href="http://localhost:9000/">HolyJobs</a> Team
+                            </p>
+                        </body>
+                    </html>""")
+              )
 
-          // Adds an attachment if the user set a file.
-          /*if (!file.get.filename.isEmpty) {
-              email.addAttachment("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))
-          }*/
-
-          mailerClient.send(email)
+              mailerClient.send(email)
+          }
       }
 
       // Redirects the user on the product page when the process ends.
@@ -276,13 +283,13 @@ class Application @Inject() (mailerClient: MailerClient, val messagesApi: Messag
     def createJob = Action(parse.multipartFormData) { implicit request =>
       val form = jobForm.bindFromRequest()
       var jobId = 0
-      println(form.toString)
+      //println(form.toString)
       form.fold(
         formWithErrors => {
           BadRequest(views.html.add(formWithErrors, Types.all,Regions.all))
         },
         job => {
-          request.body.file("img") match {
+          request.body.file("file") match {
             case Some(file) => {
               val filename = file.filename
 
