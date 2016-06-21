@@ -41,10 +41,18 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
   private val db = Database.forConfig("h2mem1")
 
   def index = Action { implicit rs =>
+    // Tries to get the URL parameters in order to restore a previous research
+    // or to perform a research from the search-header of another page, which
+    // posts these parameters on this page.
+    val region = rs.queryString.get("region").flatMap(_.headOption)
+    val startDate = rs.queryString.get("startDate").flatMap(_.headOption)
+    val jobType = rs.queryString.get("jobType").flatMap(_.headOption)
+
     val resultingJobs: List[Job] = Jobs.all
     val jobTypes : List[Type] = Types.all
     val regions : List[Region] = Regions.all
-    Ok(views.html.index(resultingJobs, jobTypes, regions))
+
+    Ok(views.html.index(resultingJobs, jobTypes, regions, region, startDate, jobType))
   }
 
   private def createDB() = {
@@ -97,21 +105,6 @@ class Application @Inject() (val messagesApi :MessagesApi)extends Controller wit
           BadRequest("errorField");
       }
   }
-
-  /*def filterJob = Action { implicit rs =>
-    val form = filterForm.bindFromRequest()
-    println(form.toString)
-    form.fold(
-      formWithErrors => {
-        BadRequest(views.html.index(Jobs.all, Types.all,Regions.all, filterForm))
-      },
-      job => {
-        val jobList = Jobs.filteredJobs(job.jobType, job.region, job.startDate)
-        Ok(views.html.index(jobList, Types.all, Regions.all, filterForm))
-      }
-    )
-
-}*/
 
   def getRegionAndTypeName(regionId:Int, jobTypeId:Int):(String,String)= {
     val jobTypeName: String = Types.typeName(jobTypeId).get.typeName

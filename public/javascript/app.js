@@ -1,5 +1,49 @@
 var numberMaxOfJobsPerLine = 4;
 
+// Validates search fields and returns their values as a JSON object.
+// Also returns the validation's status.
+function validSearchFields() {
+    // The search-when field of the header has another ID, because of the calendar,
+    // which must be placed on the bottom of it. In order to properly work, we
+    // thus have to select the right field.
+    var serchWhenField = $("#search-when").length ? $("#search-when") : $("#search-when-header")
+    var whereValue = $("#search-where").val();
+    var whenValue = serchWhenField.val();
+    var whatValue = $("#search-what").val();
+    var valid = true;
+
+    // Hides the error tooltip if the user selected a location.
+    if (whereValue) {
+        $("#search-where").tooltip('hide');
+    // Otherwise shows it and indicates the system the fields are
+    // not valid.
+    } else {
+        $("#search-where").tooltip('show');
+        valid = false;
+    }
+
+    if (whenValue) {
+        serchWhenField.tooltip('hide');
+    } else {
+        serchWhenField.tooltip('show');
+        valid = false;
+    }
+
+    if (whatValue) {
+        $("#search-what").tooltip('hide');
+    } else {
+        $("#search-what").tooltip('show');
+        valid = false;
+    }
+
+    return {
+        "valid": valid,
+        "whereValue": whereValue,
+        "whenValue": whenValue,
+        "whatValue": whatValue
+    };
+}
+
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -7,6 +51,11 @@ $(document).ready(function() {
     // in order to display a nice calendar.
     $('#search-when').pickmeup({
 		position		: 'top',
+		hide_on_select	: true
+	});
+
+    $('#search-when-header').pickmeup({
+		position		: 'bottom',
 		hide_on_select	: true
 	});
 
@@ -24,52 +73,36 @@ $(document).ready(function() {
         $("#home-title-bottom").css("bottom", "calc(" + homeTitleBottomMiddlePosition + "px - (150px + 3.8vh) * " + Math.max(1 - percentOfScrollingToBottom, 0) + ")");
     })
 
+    // Occurs during the header search-post's sending.
+    // If fields are not valid, cancels the posting.
+    $("#header-form").submit(function() {
+         // Returns false to cancel form action.
+        return validSearchFields().valid;
+    });
+
     // Occurs when the user clicked on the "Money, to me!" button.
     $("#search-jobs-button").click(function() {
-        var whereValue = $("#search-where").val();
-        var whenValue = $("#search-when").val();
-        var whatValue = $("#search-what").val();
-        var valid = true;
-
-        // Hides the error tooltip if the user selected a location.
-        if (whereValue) {
-            $("#search-where").tooltip('hide');
-        // Otherwise shows it and indicates the system the fields are
-        // not valid.
-        } else {
-            $("#search-where").tooltip('show');
-            valid = false;
-        }
-
-        if (whenValue) {
-            $("#search-when").tooltip('hide');
-        } else {
-            $("#search-when").tooltip('show');
-            valid = false;
-        }
-
-        if (whatValue) {
-            $("#search-what").tooltip('hide');
-        } else {
-            $("#search-what").tooltip('show');
-            valid = false;
-        }
+        var results = validSearchFields();
 
         // If every field is valid send an AJAX request to get the jobs.
-        if (valid) {
+        if (results.valid) {
             $("#search-jobs-button").addClass("btn-home-disabled");
             $("#search-jobs-button").text("Searching...");
+            console.log("'" + results.whenValue + "'")
 
             $.ajax({
                 method: "GET",
-                url: $("#ajaxUrl").val(),
+                url: $("#search-jobs-button").data("url"),
                 data: {
-                    region: whereValue,
-                    startDate: whenValue,
-                    jobType: whatValue
+                    region: results.whereValue,
+                    startDate: results.whenValue,
+                    jobType: results.whatValue
                 }
             })
             .done(function(msg) {
+                // Updates the URL by adding parameters.
+                window.history.pushState(null, "Search - HolyJobs", "?region=" + results.whereValue + "&startDate=" + results.whenValue + "&jobType=" + results.whatValue);
+
                 var oldHeight = $("#home-page-bottom").height();
 
                 $("#search-jobs-button").attr("data-original-title", "Search for jobs.");
@@ -197,6 +230,12 @@ $(document).ready(function() {
             });
         }
     })
+
+    // Performs a click on the search button once the page is loaded if there
+    // was parameters in the URL.
+    if ($("#fieldAlreadyFilled").val() == "true") {
+        $("#search-jobs-button").click();
+    }
 })
 
 // Hides the no result panel when the user clicked on the "Got it" button.
