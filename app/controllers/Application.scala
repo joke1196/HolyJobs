@@ -168,12 +168,12 @@ class Application @Inject() (mailerClient: MailerClient, val messagesApi: Messag
       // Sends the email if every field is valid.
       if (result == validResult) {
           if (file.get.filename.isEmpty) {
+              println("Sending to " + jobDetails.email + "...");
+
               val email = Email(
                 "HolyJobs - New application for a job!",
-                "HolyJobs <jj@email.com>",
+                "HolyJobs <from@email.com>",
                 Seq("<" + jobDetails.email + ">"),
-                // adds attachment
-                //attachments = Seq(AttachmentFile("Attachment.pdf", new File("/home/miguel/Documents/Cours/Cours/3eme_annee/TB/GeoTwit/doc/planning/Hours.pdf"))),
                 bodyHtml = Some(s"""
                     <html>
                         <body>
@@ -222,7 +222,7 @@ class Application @Inject() (mailerClient: MailerClient, val messagesApi: Messag
           } else {
              val email = Email(
                 "HolyJobs - New application for a job!",
-                "HolyJobs <jj@email.com>",
+                "HolyJobs <from@email.com>",
                 Seq("<" + jobDetails.email + ">"),
                 // adds attachment
                 attachments = Seq(AttachmentFile("Attachment.pdf", new File(file.get.ref.file.getAbsolutePath()))),
